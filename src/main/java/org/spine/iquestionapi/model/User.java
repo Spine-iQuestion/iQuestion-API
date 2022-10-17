@@ -27,18 +27,6 @@ public class User implements Model {
 
     public User() {
     }
-    
-    public User(String name, String email, String password, String organization, Role role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.organization = organization;
-        this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 
     public String serialize() {
         // TODO Auto-generated method stub
