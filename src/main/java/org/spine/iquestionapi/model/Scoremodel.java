@@ -1,19 +1,33 @@
 package org.spine.iquestionapi.model;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "scoremodel")
 public class Scoremodel implements Model{
     enum Result {
         PRESENT, PLAUSIBLE, ABSENT
     }
 
+    @Id
+    @GeneratedValue
     private int id;
-    private HashMap<Segment,Result> condition;
+    // TODO: fix the hashmap for the database
+    //private Map<Segment,Result> condition = new HashMap<Segment,Result>();
     private String result;
 
-    public Scoremodel (HashMap<Segment,Result> condition, String result) {
-        this.condition = condition;
-        this.result = result;
+    public Scoremodel () {
     }
 
     @Override

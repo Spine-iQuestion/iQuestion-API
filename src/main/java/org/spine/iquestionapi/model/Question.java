@@ -1,17 +1,29 @@
 package org.spine.iquestionapi.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "question")
 public class Question implements Model {
     enum Type {
         OPEN, CLOSED
     }
 
+    @Id
+    @GeneratedValue
     private int id;
     private String label;
     private Type type;
 
-    public Question(String label, Type type) {
-        this.label = label;
-        this.type = type;
+    public Question() {
     }
 
     @Override
