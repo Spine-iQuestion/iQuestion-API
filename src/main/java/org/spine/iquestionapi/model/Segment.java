@@ -20,7 +20,7 @@ import lombok.Setter;
 public class Segment implements Model {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String title;
     private String description;
     @OneToMany(cascade = CascadeType.ALL)

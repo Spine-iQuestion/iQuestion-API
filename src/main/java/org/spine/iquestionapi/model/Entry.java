@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Entry implements Model {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Questionnaire questionnaire;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

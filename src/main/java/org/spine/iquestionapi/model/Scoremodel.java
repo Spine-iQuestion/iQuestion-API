@@ -22,7 +22,7 @@ public class Scoremodel implements Model{
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     // TODO: fix the hashmap for the database
     //private Map<Segment,Result> condition = new HashMap<Segment,Result>();
     private String result;

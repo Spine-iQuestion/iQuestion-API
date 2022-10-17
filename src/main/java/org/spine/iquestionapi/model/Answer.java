@@ -18,7 +18,7 @@ import lombok.Setter;
 public class Answer implements Model {
     @Id
     @GeneratedValue
-    public int id;
+    public long id;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Question question;
     public String answer;

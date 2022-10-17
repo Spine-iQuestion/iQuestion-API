@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Questionnaire implements Model {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();

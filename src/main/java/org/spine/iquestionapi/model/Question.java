@@ -19,7 +19,7 @@ public class Question implements Model {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String label;
     private Type type;
 
