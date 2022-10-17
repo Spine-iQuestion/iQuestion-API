@@ -24,6 +24,9 @@ public class User implements Model {
     private String password;
     private String organization;
     private Role role;
+
+    public User() {
+    }
     
     public User(String name, String email, String password, String organization, Role role) {
         this.name = name;
