@@ -28,6 +28,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public Map<String, Object> registerHandler(@RequestBody User user){
+        // Check if the email already exists
+        if (userRepo.findByEmail(user.getEmail()) != null){
+            // TODO: Return a 400 error
+            return Collections.singletonMap("error", "Email already exists");
+        }
         String encodedPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPass);
         user = userRepo.save(user);
