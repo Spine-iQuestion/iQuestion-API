@@ -19,17 +19,11 @@ import lombok.Setter;
 @Table(name = "answers")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Answer implements Model {
+public class Answer {
     @Id
     @GeneratedValue
     public long id;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Question question;
     public String answer;
-
-    @Override
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

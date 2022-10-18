@@ -23,7 +23,7 @@ import lombok.Setter;
 @Table(name = "questionnaire")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Questionnaire implements Model {
+public class Questionnaire {
     @Id
     @GeneratedValue
     private long id;
@@ -33,9 +33,4 @@ public class Questionnaire implements Model {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Scoremodel scoremodel;
 
-    @Override
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

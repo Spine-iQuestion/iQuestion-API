@@ -16,7 +16,7 @@ import lombok.Setter;
 @Table(name = "question")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Question implements Model {
+public class Question {
     enum Type {
         OPEN, CLOSED
     }
@@ -27,9 +27,5 @@ public class Question implements Model {
     private String label;
     private Type type;
 
-    @Override
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 }

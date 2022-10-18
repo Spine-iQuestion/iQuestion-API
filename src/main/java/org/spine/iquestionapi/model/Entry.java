@@ -23,7 +23,7 @@ import lombok.Setter;
 @Table(name = "entry")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Entry implements Model {
+public class Entry  {
     @Id
     @GeneratedValue
     private long id;
@@ -33,14 +33,4 @@ public class Entry implements Model {
     private User caregiver;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
-
-    public void addAnswer(Answer answer) {
-        answers.add(answer);
-    }
-
-    @Override
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

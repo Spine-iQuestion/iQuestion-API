@@ -21,7 +21,7 @@ import lombok.Setter;
 @Table(name = "segment")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Segment implements Model {
+public class Segment {
     @Id
     @GeneratedValue
     private long id;
@@ -29,14 +29,4 @@ public class Segment implements Model {
     private String description;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
-
-    public void addQuestion(Question question) {
-        questions.add(question);
-    }
-
-    @Override
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

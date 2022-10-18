@@ -18,7 +18,7 @@ import lombok.*;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements Model {
+public class User {
     enum Role {
         SPINE_ADMIN, SPINE_USER, CAREGIVER
     }
@@ -34,8 +34,4 @@ public class User implements Model {
     private List <Entry> entries = new ArrayList<>();
     private Role role;
 
-    public String serialize() {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
