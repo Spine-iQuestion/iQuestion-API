@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 // TODO: There are some changes we need to make to this controller
-// 1. The method to register an user is now in the AuthController.
+// 1. The method to register a user is now in the AuthController.
 //      We might need to move that method here. But I'm not sure.
 // 2. Updating the user's password is not implemented yet.
 //      Because it needs to be hashed and all that.
@@ -30,13 +30,13 @@ public class UserController {
         return userRepo.findAll().toArray(new User[0]);
     }
 
-    // Get an user by id
+    // Get a user by id
     @GetMapping("/{id}")
     public User getUserById(@PathVariable(value="id") long id){
         return userRepo.findById(id).get();
     }
 
-    // Update an user
+    // Update a user
     @PostMapping("/{id}")
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).get();
@@ -47,7 +47,7 @@ public class UserController {
         return userRepo.save(userToUpdate);
     }
 
-    // Delete an user
+    // Delete a user
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable(value="id") long id){
         userRepo.deleteById(id);
