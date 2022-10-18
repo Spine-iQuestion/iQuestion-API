@@ -1,8 +1,13 @@
 package org.spine.iquestionapi.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.*;
@@ -11,6 +16,8 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Model {
     enum Role {
         SPINE_ADMIN, SPINE_USER, CAREGIVER
@@ -23,10 +30,9 @@ public class User implements Model {
     private String email;
     private String password;
     private String organization;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List <Entry> entries = new ArrayList<>();
     private Role role;
-
-    public User() {
-    }
 
     public String serialize() {
         // TODO Auto-generated method stub

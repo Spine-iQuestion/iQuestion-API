@@ -8,13 +8,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "scoremodel")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Scoremodel implements Model{
     enum Result {
         PRESENT, PLAUSIBLE, ABSENT
@@ -26,9 +30,6 @@ public class Scoremodel implements Model{
     // TODO: fix the hashmap for the database
     //private Map<Segment,Result> condition = new HashMap<Segment,Result>();
     private String result;
-
-    public Scoremodel () {
-    }
 
     @Override
     public String serialize() {
