@@ -12,13 +12,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "entry")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Entry implements Model {
     @Id
     @GeneratedValue
@@ -29,9 +33,6 @@ public class Entry implements Model {
     private User caregiver;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
-
-    public Entry() {
-    }
 
     public void addAnswer(Answer answer) {
         answers.add(answer);

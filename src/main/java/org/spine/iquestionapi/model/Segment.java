@@ -10,13 +10,17 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "segment")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Segment implements Model {
     @Id
     @GeneratedValue
@@ -25,9 +29,6 @@ public class Segment implements Model {
     private String description;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Question> questions = new ArrayList<>();
-
-    public Segment() {
-    }
 
     public void addQuestion(Question question) {
         questions.add(question);
