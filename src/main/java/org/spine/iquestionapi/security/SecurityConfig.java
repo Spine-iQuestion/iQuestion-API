@@ -31,8 +31,9 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
+                // TODO: Add roles to paths here
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/user/**").hasRole("SPINE_ADMIN")
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()
