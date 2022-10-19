@@ -1,6 +1,6 @@
 package org.spine.iquestionapi.controller;
 
-import org.spine.iquestionapi.services.EmailSenderService;
+import org.spine.iquestionapi.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

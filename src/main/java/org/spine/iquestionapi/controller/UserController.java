@@ -43,6 +43,7 @@ public class UserController {
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
         if (user.getRole() != null) userToUpdate.setRole(user.getRole());
+        if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
 
         return userRepo.save(userToUpdate);
     }

@@ -1,4 +1,4 @@
-package org.spine.iquestionapi.services;
+package org.spine.iquestionapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,6 +12,7 @@ public class EmailSenderService {
 
     public void sendSimpleEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
+        // TODO: should be an environment variable
         message.setFrom("your_email");
         message.setTo(toEmail);
         message.setText(body);
