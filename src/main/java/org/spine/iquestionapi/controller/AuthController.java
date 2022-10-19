@@ -9,6 +9,7 @@ import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,8 +37,10 @@ public class AuthController {
     public Map<String, Object> registerHandler(@RequestBody User user){
         // Check if the email already exists
         if (userRepo.findByEmail(user.getEmail()) != null){
-            // TODO: Return a 400 error
-            return Collections.singletonMap("error", "Email already exists");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "This email already exists"
+            );
         }
         String encodedPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPass);
