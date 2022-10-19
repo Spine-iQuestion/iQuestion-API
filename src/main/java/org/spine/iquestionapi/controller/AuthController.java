@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -80,7 +81,11 @@ public class AuthController {
         // Send token via email
         // TODO: no template yet for email
         EmailSenderService emailSenderService = new EmailSenderService();
-        emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        try {
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        } catch (MessagingException ignored) {
+            return false;
+        }
 
         return true;
     }
