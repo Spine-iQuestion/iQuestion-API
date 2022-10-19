@@ -84,7 +84,11 @@ public class AuthController {
 
         // Send token via email
         // TODO: no template yet for email
-        emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        try {
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
+        }
 
         return true;
     }
