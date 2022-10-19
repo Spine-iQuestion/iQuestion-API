@@ -34,6 +34,8 @@ public class AuthController {
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    @Autowired private EmailSenderService emailSenderService;
+
     @PostMapping("/register")
     public Map<String, Object> registerHandler(@RequestBody User user){
         // Check if the email already exists
@@ -68,9 +70,11 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public boolean resetPassword(@RequestBody User user){
-        if (userRepo.findByEmail(user.getEmail()) == null){
-            return false;
-        }
+//        if (userRepo.findByEmail(user.getEmail()) == null){
+//            return false;
+//        }
+        System.out.println(user.getEmail());
+        System.out.println(user);
 
         // Generate a token and save it to the database
         PasswordToken token = new PasswordToken();
@@ -80,12 +84,7 @@ public class AuthController {
 
         // Send token via email
         // TODO: no template yet for email
-        EmailSenderService emailSenderService = new EmailSenderService();
-        try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
-        } catch (MessagingException ignored) {
-            return false;
-        }
+        emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
 
         return true;
     }
