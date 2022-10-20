@@ -70,11 +70,9 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public boolean resetPassword(@RequestBody User user){
-//        if (userRepo.findByEmail(user.getEmail()) == null){
-//            return false;
-//        }
-        System.out.println(user.getEmail());
-        System.out.println(user);
+        if (userRepo.findByEmail(user.getEmail()) == null){
+            return false;
+        }
 
         // Generate a token and save it to the database
         PasswordToken token = new PasswordToken();
@@ -85,7 +83,7 @@ public class AuthController {
         // Send token via email
         // TODO: no template yet for email
         try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token.getToken().toString());
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
         }
