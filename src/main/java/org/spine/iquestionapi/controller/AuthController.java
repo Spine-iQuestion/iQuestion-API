@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,6 +33,8 @@ public class AuthController {
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
+
+    @Autowired private EmailSenderService emailSenderService;
 
     @PostMapping("/register")
     public Map<String, Object> registerHandler(@RequestBody User user){
@@ -79,8 +82,11 @@ public class AuthController {
 
         // Send token via email
         // TODO: no template yet for email
-        EmailSenderService emailSenderService = new EmailSenderService();
-        emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        try {
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token.getToken().toString());
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
+        }
 
         return true;
     }
