@@ -14,10 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
@@ -34,6 +31,7 @@ public class AuthController {
     @Autowired private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
+    @ResponseBody
     public Map<String, Object> registerHandler(@RequestBody User user){
         // Check if the email already exists
         if (userRepo.findByEmail(user.getEmail()) != null){
@@ -50,6 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @ResponseBody
     public Map<String, Object> loginHandler(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
@@ -61,11 +60,13 @@ public class AuthController {
 
             return Collections.singletonMap("jwt-token", token);
         }catch (AuthenticationException authExc){
-            throw new RuntimeException("Invalid Login Credentials");
+            authExc.printStackTrace();
         }
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/reset-password")
+    @ResponseBody
     public boolean resetPassword(@RequestBody User user){
         if (userRepo.findByEmail(user.getEmail()) == null){
             return false;
@@ -90,14 +91,14 @@ public class AuthController {
     public boolean changePassword(@RequestBody PasswordToken token){
         PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
-            return false;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid token");
         }
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(token.getPassword()));
         userRepo.save(user);
 
-        return true;
+        throw new ResponseStatusException(HttpStatus.OK,"Password Changed");
     }
 
 
