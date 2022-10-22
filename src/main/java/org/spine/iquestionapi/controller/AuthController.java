@@ -78,17 +78,16 @@ public class AuthController {
             String token = jwtUtil.generateToken(body.getEmail());
 
             return Collections.singletonMap("jwt-token", token);
-        }catch (AuthenticationException authExc){
+        }catch (AuthenticationException authExc) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping("/reset-password")
     @ResponseBody
-    public boolean resetPassword(@RequestBody User user){
+    public Map<String, Object> resetPassword(@RequestBody User user){
         if (userRepo.findByEmail(user.getEmail()) == null){
-            return false;
+            return Collections.singletonMap("error", "Email not found or invalid");
         }
 
         // Generate a token and save it to the database
@@ -105,25 +104,22 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
         }
 
-        return true;
+        return Collections.singletonMap("status", "Sent token to email");
     }
 
     // TODO: verify user
     @PostMapping("/change-password")
-    public boolean changePassword(@RequestBody PasswordToken token){
+    @ResponseBody
+    public Map<String, Object> changePassword(@RequestBody PasswordToken token){
         PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid token");
+            return Collections.singletonMap("error", "Invalid token");
         }
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(token.getPassword()));
         userRepo.save(user);
 
-        throw new ResponseStatusException(HttpStatus.OK,"Password Changed");
+        return Collections.singletonMap("status", "Token changed");
     }
-
-
-
-
 }
