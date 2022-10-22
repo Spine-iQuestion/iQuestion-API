@@ -37,23 +37,39 @@ public class AuthController {
     @Autowired private EmailSenderService emailSenderService;
 
     @PostMapping("/register")
-    public Map<String, Object> registerHandler(@RequestBody User user){
+    public Map<String, Object> register(@RequestBody User user){
+        // Check if email is of a valid type
+        if(!StringUtil.isValidEmail(user.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
+        }
+
+        // Check if password is safe
+        if(!StringUtil.isSafePassword(user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is not safe");
+        }
+
         // Check if the email already exists
-        if (userRepo.findByEmail(user.getEmail()) != null){
+        if (userRepo.findByEmail(user.getEmail()).isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "This email already exists"
             );
         }
+
+        // Encode the password
         String encodedPass = passwordEncoder.encode(user.getPassword());
+
+        // Save encoded password
         user.setPassword(encodedPass);
         user = userRepo.save(user);
+
+        // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
         return Collections.singletonMap("jwt-token", token);
     }
 
     @PostMapping("/login")
-    public Map<String, Object> loginHandler(@RequestBody LoginCredentials body){
+    public Map<String, Object> login(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
                     new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
@@ -64,7 +80,7 @@ public class AuthController {
 
             return Collections.singletonMap("jwt-token", token);
         }catch (AuthenticationException authExc){
-            throw new RuntimeException("Invalid Login Credentials");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
     }
 
