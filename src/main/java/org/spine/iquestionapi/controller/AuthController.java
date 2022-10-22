@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -30,26 +31,44 @@ public class AuthController {
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    @Autowired private EmailSenderService emailSenderService;
+
     @PostMapping("/register")
     @ResponseBody
-    public Map<String, Object> registerHandler(@RequestBody User user){
+    public Map<String, Object> register(@RequestBody User user){
+        // Check if email is of a valid type
+        if(!StringUtil.isValidEmail(user.getEmail())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
+        }
+
+        // Check if password is safe
+        if(!StringUtil.isSafePassword(user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is not safe");
+        }
+
         // Check if the email already exists
-        if (userRepo.findByEmail(user.getEmail()) != null){
+        if (userRepo.findByEmail(user.getEmail()).isPresent()){
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "This email already exists"
             );
         }
+
+        // Encode the password
         String encodedPass = passwordEncoder.encode(user.getPassword());
+
+        // Save encoded password
         user.setPassword(encodedPass);
         user = userRepo.save(user);
+
+        // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
         return Collections.singletonMap("jwt-token", token);
     }
 
     @PostMapping("/login")
     @ResponseBody
-    public Map<String, Object> loginHandler(@RequestBody LoginCredentials body){
+    public Map<String, Object> login(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
                     new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
@@ -60,7 +79,7 @@ public class AuthController {
 
             return Collections.singletonMap("jwt-token", token);
         }catch (AuthenticationException authExc){
-            authExc.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -80,8 +99,11 @@ public class AuthController {
 
         // Send token via email
         // TODO: no template yet for email
-        EmailSenderService emailSenderService = new EmailSenderService();
-        emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", "Your token is: " + token.getToken());
+        try {
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token.getToken().toString());
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
+        }
 
         return true;
     }
