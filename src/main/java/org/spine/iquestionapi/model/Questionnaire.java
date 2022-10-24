@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Questionnaire {
     @Id
     @GeneratedValue
     private long id;
+    @NotNull
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();
