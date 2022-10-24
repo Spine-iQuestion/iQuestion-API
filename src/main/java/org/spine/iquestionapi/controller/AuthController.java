@@ -23,7 +23,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@ResponseStatus(HttpStatus.OK)
 public class AuthController {
 
     @Autowired private UserRepo userRepo;
@@ -89,7 +88,7 @@ public class AuthController {
     @ResponseBody
     public Map<String, Object> resetPassword(@RequestBody User user){
         if (userRepo.findByEmail(user.getEmail()) == null){
-            return Collections.singletonMap("error", "Email not found or invalid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find email.");
         }
 
         // Generate a token and save it to the database
@@ -115,7 +114,7 @@ public class AuthController {
     public Map<String, Object> changePassword(@RequestBody PasswordToken token){
         PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
-            return Collections.singletonMap("error", "Invalid token");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.")
         }
 
         User user = tokenFromDb.getOwner();
