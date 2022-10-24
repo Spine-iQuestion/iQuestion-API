@@ -14,10 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
@@ -37,7 +34,8 @@ public class AuthController {
     @Autowired private EmailSenderService emailSenderService;
 
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody User user){
+    @ResponseBody
+    public Map<String, String> register(@RequestBody User user){
         // Check if email is of a valid type
         if(!StringUtil.isValidEmail(user.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
@@ -65,10 +63,12 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
+//        return Collections.singletonMap("jwt-token", token);
         return Collections.singletonMap("jwt-token", token);
     }
 
     @PostMapping("/login")
+    @ResponseBody
     public Map<String, Object> login(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
@@ -79,15 +79,16 @@ public class AuthController {
             String token = jwtUtil.generateToken(body.getEmail());
 
             return Collections.singletonMap("jwt-token", token);
-        }catch (AuthenticationException authExc){
+        }catch (AuthenticationException authExc) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
     }
 
     @PostMapping("/reset-password")
-    public boolean resetPassword(@RequestBody User user){
+    @ResponseBody
+    public Map<String, Object> resetPassword(@RequestBody User user){
         if (userRepo.findByEmail(user.getEmail()) == null){
-            return false;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find email.");
         }
 
         // Generate a token and save it to the database
@@ -104,25 +105,22 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
         }
 
-        return true;
+        return Collections.singletonMap("status", "Sent token to email");
     }
 
     // TODO: verify user
     @PostMapping("/change-password")
-    public boolean changePassword(@RequestBody PasswordToken token){
+    @ResponseBody
+    public Map<String, Object> changePassword(@RequestBody PasswordToken token){
         PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
-            return false;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.")
         }
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(token.getPassword()));
         userRepo.save(user);
 
-        return true;
+        return Collections.singletonMap("status", "Token changed");
     }
-
-
-
-
 }
