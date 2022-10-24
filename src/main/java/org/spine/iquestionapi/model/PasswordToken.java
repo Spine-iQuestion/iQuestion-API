@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-// TODO: maybe this isn't the best class name for "token credentials"
 public class PasswordToken {
     @Id
     @GeneratedValue

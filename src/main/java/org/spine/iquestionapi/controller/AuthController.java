@@ -111,7 +111,6 @@ public class AuthController {
         return Collections.singletonMap("status", "Sent token to email");
     }
 
-    // TODO: verify user
     @PostMapping("/change-password")
     @ResponseBody
     public Map<String, Object> changePassword(@RequestBody PasswordToken token){

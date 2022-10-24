@@ -29,9 +29,10 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                // TODO: Add roles to paths here
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/user/**").hasRole("SPINE_ADMIN")
+                .antMatchers("/entry/**").hasRole("CAREGIVER")
+                // TODO: spine admin shoud be able to access this endpoint as well
+                .antMatchers("/questionnaire/**").hasRole("SPINE_USER")
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()

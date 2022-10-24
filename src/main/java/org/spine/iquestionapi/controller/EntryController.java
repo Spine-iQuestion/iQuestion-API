@@ -2,7 +2,6 @@ package org.spine.iquestionapi.controller;
 
 import java.util.List;
 
-import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.repository.EntryRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
@@ -53,11 +52,6 @@ public class EntryController {
     @PutMapping("/")
     @ResponseBody
     public Entry createEntry(@RequestBody Entry entry){
-        // Check if user is a caregiver
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.CAREGIVER) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not a caregiver.");
-        }
-
         return entryRepo.save(entry);
     }
 }
