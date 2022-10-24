@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    enum Role {
+    public enum Role {
         SPINE_ADMIN, SPINE_USER, CAREGIVER
     }
     
@@ -21,6 +21,7 @@ public class User {
     @GeneratedValue
     private long id;
     private String name;
+    @Column(unique=true)
     private String email;
     private String password;
     private String organization;

@@ -6,6 +6,7 @@ import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.PasswordTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.security.JWTUtil;
+import org.spine.iquestionapi.service.AuthorizationService;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class AuthController {
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private AuthorizationService authorizationService;
 
     @Autowired private EmailSenderService emailSenderService;
 
@@ -63,7 +65,7 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
-//        return Collections.singletonMap("jwt-token", token);
+        
         return Collections.singletonMap("jwt-token", token);
     }
 
@@ -87,8 +89,9 @@ public class AuthController {
     @PostMapping("/reset-password")
     @ResponseBody
     public Map<String, Object> resetPassword(@RequestBody User user){
-        if (userRepo.findByEmail(user.getEmail()) == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't find email.");
+        // Check if user is the same as the loggen in user
+        if(!user.getEmail().equals(authorizationService.getLoggedInUser().getEmail())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "That's not your email!");
         }
 
         // Generate a token and save it to the database
