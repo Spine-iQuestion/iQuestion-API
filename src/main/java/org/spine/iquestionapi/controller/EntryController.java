@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/entry")
+@ResponseStatus(HttpStatus.OK)
 public class EntryController {
     @Autowired private EntryRepo entryRepo;
 

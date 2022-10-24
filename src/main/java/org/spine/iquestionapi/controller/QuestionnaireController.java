@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/questionnaire")
+@ResponseStatus(HttpStatus.OK)
 public class QuestionnaireController {
 
     @Autowired private QuestionnaireRepo questionnaireRepo;

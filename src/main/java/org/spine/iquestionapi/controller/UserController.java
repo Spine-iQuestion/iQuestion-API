@@ -3,6 +3,7 @@ package org.spine.iquestionapi.controller;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 // TODO: There are some changes we need to make to this controller
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@ResponseStatus(HttpStatus.OK)
 public class UserController {
 
     @Autowired private UserRepo userRepo;

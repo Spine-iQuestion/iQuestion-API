@@ -23,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@ResponseStatus(HttpStatus.OK)
 public class AuthController {
 
     @Autowired private UserRepo userRepo;
@@ -35,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseBody
-    public Map<String, Object> register(@RequestBody User user){
+    public Map<String, String> register(@RequestBody User user){
         // Check if email is of a valid type
         if(!StringUtil.isValidEmail(user.getEmail())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
@@ -63,6 +64,7 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
+//        return Collections.singletonMap("jwt-token", token);
         return Collections.singletonMap("jwt-token", token);
     }
 
