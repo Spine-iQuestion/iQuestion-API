@@ -114,7 +114,7 @@ public class AuthController {
     public Map<String, Object> changePassword(@RequestBody PasswordToken token){
         PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.")
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
         }
 
         User user = tokenFromDb.getOwner();
