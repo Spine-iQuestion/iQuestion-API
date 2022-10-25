@@ -15,7 +15,7 @@ public class EmailResetToken {
     @GeneratedValue
     private long id;
     private String token;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     private User owner;
     private String password;
 

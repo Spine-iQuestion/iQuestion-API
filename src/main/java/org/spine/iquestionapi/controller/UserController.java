@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/user")
-// TODO : dont send password in response
 public class UserController {
 
     @Autowired private UserRepo userRepo;
@@ -83,9 +82,15 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
+        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
+        }
+        
         // Get user to delete
         User userToDelete = userRepo.findById(id).get();
-        // TODO: check all cascading. The function doenst even need to delete from userrepo now
         emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);
+
+        // Remove user from userrepo
+        userRepo.delete(userToDelete);
     }
 }
