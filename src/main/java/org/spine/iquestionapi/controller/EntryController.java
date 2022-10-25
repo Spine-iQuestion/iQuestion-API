@@ -3,6 +3,7 @@ package org.spine.iquestionapi.controller;
 import java.util.List;
 
 import org.spine.iquestionapi.model.Entry;
+import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EntryRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,8 @@ public class EntryController {
     @GetMapping("/{id}")
     @ResponseBody
     public Entry getEntryById(@PathVariable(value="id") long id){
-        List<Entry> entries = authorizationService.getLoggedInUser().getEntries();
+        User loggedInUser = authorizationService.getLoggedInUser();
+        List<Entry> entries = loggedInUser.getEntries();
 
         for (Entry entry : entries) {
             if (entry.getId() == id) {
@@ -29,14 +31,15 @@ public class EntryController {
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to view this entry.");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
     }
 
     // Delete an entry
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteEntry(@PathVariable(value="id") long id){
-        List<Entry> entries = authorizationService.getLoggedInUser().getEntries();
+        User loggedInUser = authorizationService.getLoggedInUser();
+        List<Entry> entries = loggedInUser.getEntries();
 
         for (Entry entry : entries) {
             if (entry.getId() == id) {
@@ -45,7 +48,7 @@ public class EntryController {
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to view this entry.");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
     }
 
     // Create an entry
