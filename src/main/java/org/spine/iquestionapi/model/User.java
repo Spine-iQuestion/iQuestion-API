@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 
 @Getter
@@ -23,6 +26,7 @@ public class User {
     private String name;
     @Column(unique=true)
     private String email;
+    @JsonIgnore
     private String password;
     private String organization;
     @OneToMany(cascade = CascadeType.ALL)
