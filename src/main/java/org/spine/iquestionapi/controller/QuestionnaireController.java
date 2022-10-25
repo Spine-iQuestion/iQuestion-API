@@ -5,7 +5,6 @@ import org.spine.iquestionapi.repository.QuestionnaireRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/questionnaire")
@@ -16,7 +15,6 @@ public class QuestionnaireController {
 
     // Get all questionnaires
     @GetMapping("/all")
-
     public Questionnaire[] getAllQuestionnaires(){
         return questionnaireRepo.findAll().toArray(new Questionnaire[0]);
     }

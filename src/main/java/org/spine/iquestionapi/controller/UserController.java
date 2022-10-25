@@ -2,16 +2,12 @@ package org.spine.iquestionapi.controller;
 
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.UserRepo;
+import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-// TODO: There are some changes we need to make to this controller
-// 1. The method to register a user is now in the AuthController.
-//      We might need to move that method here. But I'm not sure.
-// 2. Updating the user's password is not implemented yet.
-//      Because it needs to be hashed and all that.
-// - Jesse
 
 @RestController
 @RequestMapping("/user")
@@ -19,11 +15,17 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @Autowired private UserRepo userRepo;
+    @Autowired private AuthorizationService authorizationService;
 
     // Get all users
     @GetMapping("/all")
     @ResponseBody
     public User[] getAllUsers(){
+        // Check if logged in user is admin
+        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
+        }
+
         return userRepo.findAll().toArray(new User[0]);
     }
 
@@ -31,6 +33,16 @@ public class UserController {
     @GetMapping("/{id}")
     @ResponseBody
     public User getUserById(@PathVariable(value="id") long id){
+        // Check if user is looking for himself
+        if (authorizationService.getLoggedInUser().getId() == id) {
+            return userRepo.findById(id).get();
+        }
+        
+        // Check if logged in user is admin
+        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
+        }
+
         return userRepo.findById(id).get();
     }
 
@@ -38,6 +50,11 @@ public class UserController {
     @PostMapping("/{id}")
     @ResponseBody
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
+        // Check if logged in user is admin
+        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
+        }
+
         User userToUpdate = userRepo.findById(id).get();
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
@@ -51,6 +68,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
+        // Check if logged in user is admin
+        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
+        }
+
         userRepo.deleteById(id);
     }
 }
