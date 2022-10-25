@@ -1,9 +1,9 @@
 package org.spine.iquestionapi.controller;
 
 import org.spine.iquestionapi.model.LoginCredentials;
-import org.spine.iquestionapi.model.PasswordToken;
+import org.spine.iquestionapi.model.EmailResetToken;
 import org.spine.iquestionapi.model.User;
-import org.spine.iquestionapi.repository.PasswordTokenRepo;
+import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.AuthorizationService;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired private UserRepo userRepo;
-    @Autowired private PasswordTokenRepo passwordTokenRepo;
+    @Autowired private EmailResetTokenRepo passwordTokenRepo;
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
@@ -95,8 +95,8 @@ public class AuthController {
         }
 
         // Generate a token and save it to the database
-        PasswordToken token = new PasswordToken();
-        token.setToken(StringUtil.generateRandomString(PasswordToken.TOKEN_LENGTH));
+        EmailResetToken token = new EmailResetToken();
+        token.setToken(StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH));
         token.setOwner(user);
         passwordTokenRepo.save(token);
 
@@ -113,8 +113,8 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @ResponseBody
-    public Map<String, Object> changePassword(@RequestBody PasswordToken token){
-        PasswordToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
+    public Map<String, Object> changePassword(@RequestBody EmailResetToken token){
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
         if (tokenFromDb == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
         }

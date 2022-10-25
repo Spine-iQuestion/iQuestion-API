@@ -3,6 +3,7 @@ package org.spine.iquestionapi.controller;
 import java.util.Objects;
 
 import org.spine.iquestionapi.model.User;
+import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/user")
-@ResponseStatus(HttpStatus.OK)
+// TODO : dont send password in response
 public class UserController {
 
     @Autowired private UserRepo userRepo;
+    @Autowired private EmailResetTokenRepo emailResetTokenRepo;
     @Autowired private AuthorizationService authorizationService;
 
     // Get all users
@@ -81,11 +83,9 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
-        // Check if logged in user is admin
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
-        }
-
-        userRepo.deleteById(id);
+        // Get user to delete
+        User userToDelete = userRepo.findById(id).get();
+        // TODO: check all cascading. The function doenst even need to delete from userrepo now
+        emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);
     }
 }

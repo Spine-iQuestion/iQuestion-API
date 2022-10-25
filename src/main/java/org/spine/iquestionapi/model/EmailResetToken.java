@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class PasswordToken {
+public class EmailResetToken {
     @Id
     @GeneratedValue
     private long id;
