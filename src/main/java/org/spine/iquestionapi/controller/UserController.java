@@ -1,5 +1,7 @@
 package org.spine.iquestionapi.controller;
 
+import java.util.Objects;
+
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
@@ -22,11 +24,22 @@ public class UserController {
     @ResponseBody
     public User[] getAllUsers(){
         // Check if logged in user is admin
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+        User loggedInUser = authorizationService.getLoggedInUser();
+        if (Objects.isNull(loggedInUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not logged in.");
+        }
+
+        if (loggedInUser.getRole() != User.Role.SPINE_ADMIN) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
         }
 
         return userRepo.findAll().toArray(new User[0]);
+    }
+
+    @GetMapping("/me")
+    @ResponseBody
+    public User getLoggedInUser(){
+        return authorizationService.getLoggedInUser();
     }
 
     // Get a user by id
