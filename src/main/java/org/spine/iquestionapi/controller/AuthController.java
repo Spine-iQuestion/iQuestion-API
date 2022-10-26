@@ -1,7 +1,8 @@
 package org.spine.iquestionapi.controller;
 
-import org.spine.iquestionapi.model.LoginCredentials;
+import org.spine.iquestionapi.model.ChangePassword;
 import org.spine.iquestionapi.model.EmailResetToken;
+import org.spine.iquestionapi.model.LoginCredentials;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
@@ -65,7 +66,7 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
-        
+
         return Collections.singletonMap("jwt-token", token);
     }
 
@@ -113,15 +114,16 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @ResponseBody
-    public Map<String, Object> changePassword(@RequestBody EmailResetToken token){
-        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
-        if (tokenFromDb == null){
+    public Map<String, Object> changePassword(@RequestBody ChangePassword credentials) {
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
+        if (tokenFromDb == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
         }
 
         User user = tokenFromDb.getOwner();
-        user.setPassword(passwordEncoder.encode(token.getPassword()));
+        user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
         userRepo.save(user);
+        passwordTokenRepo.removeEmailResetTokenByToken(tokenFromDb);
 
         return Collections.singletonMap("status", "Token changed");
     }
