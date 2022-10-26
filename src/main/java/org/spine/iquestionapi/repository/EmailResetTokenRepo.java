@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EmailResetTokenRepo extends JpaRepository<EmailResetToken, Long> {
     public Optional<EmailResetToken> findByToken(String token);
     public Optional<EmailResetToken> findByOwner(User user);
+    public Optional<EmailResetToken> removeEmailResetTokenByToken(EmailResetToken token);
 }

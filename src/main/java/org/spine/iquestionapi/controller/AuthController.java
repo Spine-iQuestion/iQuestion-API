@@ -1,5 +1,6 @@
 package org.spine.iquestionapi.controller;
 
+import org.spine.iquestionapi.model.ChangePassword;
 import org.spine.iquestionapi.model.LoginCredentials;
 import org.spine.iquestionapi.model.EmailResetToken;
 import org.spine.iquestionapi.model.User;
@@ -113,15 +114,16 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @ResponseBody
-    public Map<String, Object> changePassword(@RequestBody EmailResetToken token){
-        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
+    public Map<String, Object> changePassword(@RequestBody ChangePassword credentials){
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
         if (tokenFromDb == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
         }
 
         User user = tokenFromDb.getOwner();
-        user.setPassword(passwordEncoder.encode(token.getPassword()));
+        user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
         userRepo.save(user);
+        passwordTokenRepo.removeEmailResetTokenByToken(tokenFromDb);
 
         return Collections.singletonMap("status", "Token changed");
     }
