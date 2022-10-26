@@ -14,19 +14,10 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @ToString
 public class ChangePassword {
-
+    @Id
     private long id;
 
     private String token;
 
     private String newPassword;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Id
-    public Long getId() {
-        return id;
-    }
 }
