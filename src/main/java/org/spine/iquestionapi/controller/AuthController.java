@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Map;
 
@@ -114,6 +115,7 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @ResponseBody
+    @Transactional
     public Map<String, Object> changePassword(@RequestBody ChangePassword credentials) {
         EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
         if (tokenFromDb == null) {
@@ -123,7 +125,7 @@ public class AuthController {
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
         userRepo.save(user);
-        passwordTokenRepo.removeEmailResetTokenByToken(tokenFromDb);
+        passwordTokenRepo.removeAllByToken(tokenFromDb.getToken());
 
         return Collections.singletonMap("status", "Token changed");
     }

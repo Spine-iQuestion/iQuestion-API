@@ -4,6 +4,7 @@ package org.spine.iquestionapi.model;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Getter
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 public class ChangePassword {
 
     @Id
+    @GeneratedValue
     private long id;
 
     private String token;
