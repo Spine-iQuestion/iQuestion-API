@@ -1,7 +1,8 @@
 package org.spine.iquestionapi.controller;
 
-import org.spine.iquestionapi.model.LoginCredentials;
+import org.spine.iquestionapi.model.ChangePassword;
 import org.spine.iquestionapi.model.EmailResetToken;
+import org.spine.iquestionapi.model.LoginCredentials;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -53,7 +56,7 @@ public class AuthController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "This email already exists"
-            );
+                    );
         }
 
         // Encode the password
@@ -65,7 +68,6 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
-        
         return Collections.singletonMap("jwt-token", token);
     }
 
@@ -86,24 +88,32 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> resetPassword(@RequestBody User user){
-        // Check if user is the same as the loggen in user
-        if(!user.getEmail().equals(authorizationService.getLoggedInUser().getEmail())){
+    public Map<String, Object> requestPasswordReset(@RequestBody User user) {
+        // Get logged in user
+        User loggedInUser = authorizationService.getLoggedInUser();
+
+        // Check if user is the same as the logged in user
+        if (!user.getEmail().equals(loggedInUser.getEmail())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "That's not your email!");
         }
 
-        // Generate a token and save it to the database
-        EmailResetToken token = new EmailResetToken();
-        token.setToken(StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH));
-        token.setOwner(user);
-        passwordTokenRepo.save(token);
+        // Check if user already has token
+        if (passwordTokenRepo.findByOwner(loggedInUser).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already have a token!");
+        }
+
+        EmailResetToken tokenEntity = new EmailResetToken();
+        String token = StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH);
+        tokenEntity.setToken(token);
+        tokenEntity.setOwner(loggedInUser);
+        passwordTokenRepo.save(tokenEntity);
 
         // Send token via email
         // TODO: no template yet for email
         try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token.getToken().toString());
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
         }
@@ -113,16 +123,17 @@ public class AuthController {
 
     @PostMapping("/change-password")
     @ResponseBody
-    public Map<String, Object> changePassword(@RequestBody EmailResetToken token){
-        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(token.getToken()).get();
-        if (tokenFromDb == null){
+    public Map<String, Object> changePassword(@RequestBody ChangePassword credentials) {
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
+        if (tokenFromDb.getToken() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
         }
 
         User user = tokenFromDb.getOwner();
-        user.setPassword(passwordEncoder.encode(token.getPassword()));
+        user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
         userRepo.save(user);
+        passwordTokenRepo.removeByToken(tokenFromDb.getToken());
 
-        return Collections.singletonMap("status", "Token changed");
+        return Collections.singletonMap("status", "Password changed");
     }
 }

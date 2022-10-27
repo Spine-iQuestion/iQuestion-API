@@ -12,8 +12,7 @@ public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private String NO_REPLY_EMAIL = "noreply@spine.ngo";
-
+    private final String NO_REPLY_EMAIL = "noreply@spine.ngo";
     public void sendSimpleEmail(String toEmail, String subject, String token) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");

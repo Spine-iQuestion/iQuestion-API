@@ -1,13 +1,12 @@
 package org.spine.iquestionapi.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.*;
 
 @Getter

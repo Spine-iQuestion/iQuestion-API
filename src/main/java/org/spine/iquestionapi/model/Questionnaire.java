@@ -34,5 +34,5 @@ public class Questionnaire {
     private List<Segment> segments = new ArrayList<>();
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Scoremodel scoremodel;
-
+    
 }
