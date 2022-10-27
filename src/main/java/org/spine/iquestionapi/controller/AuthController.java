@@ -67,7 +67,6 @@ public class AuthController {
 
         // Generate and return the token
         String token = jwtUtil.generateToken(user.getEmail());
-
         return Collections.singletonMap("jwt-token", token);
     }
 
