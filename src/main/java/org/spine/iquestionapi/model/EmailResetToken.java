@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "password_tokens")
+@Table(name = "email_reset_token")
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -16,8 +16,8 @@ public class EmailResetToken {
     private long id;
     private String token;
     @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(unique = true, nullable = false)
     private User owner;
-    private String password;
 
     public static int TOKEN_LENGTH = 32;
 }

@@ -11,5 +11,5 @@ public interface EmailResetTokenRepo extends JpaRepository<EmailResetToken, Long
 
     Optional<EmailResetToken> findByOwner(User user);
 
-    void removeAllByToken(String token);
+    void removeByToken(String token);
 }

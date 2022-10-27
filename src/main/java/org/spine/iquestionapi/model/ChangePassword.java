@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @Entity
@@ -16,6 +18,7 @@ import javax.persistence.Id;
 public class ChangePassword {
 
     @Id
+    @JsonIgnore
     @GeneratedValue
     private long id;
 
