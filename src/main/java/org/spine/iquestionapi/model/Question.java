@@ -5,6 +5,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.spine.iquestionapi.service.EntityIdResolver;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +21,12 @@ import lombok.Setter;
 @Table(name = "question")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(
+   generator = ObjectIdGenerators.PropertyGenerator.class,
+   property = "id",
+   resolver = EntityIdResolver.class,
+scope = Question.class
+   )
 public class Question {
     enum Type {
         OPEN, CLOSED

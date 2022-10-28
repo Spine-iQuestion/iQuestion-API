@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.Map;
