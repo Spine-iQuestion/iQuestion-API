@@ -25,5 +25,6 @@ public class Answer {
     public long id;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Question question;
-    public String answer;
+    public String result;
+    public String comment;
 }
