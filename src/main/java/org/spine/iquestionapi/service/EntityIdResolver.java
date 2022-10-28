@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
 import javax.persistence.EntityManager;
 
-/**
- * @author fta on 20.12.15.
- */
-
 public class EntityIdResolver
         implements ObjectIdResolver {
 
