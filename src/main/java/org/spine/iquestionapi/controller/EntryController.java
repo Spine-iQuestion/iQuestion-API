@@ -55,6 +55,8 @@ public class EntryController {
     @PutMapping("/")
     @ResponseBody
     public Entry createEntry(@RequestBody Entry entry){
+        User loggedInUser = authorizationService.getLoggedInUser();
+        entry.setCaregiver(loggedInUser);
         return entryRepo.save(entry);
     }
 }

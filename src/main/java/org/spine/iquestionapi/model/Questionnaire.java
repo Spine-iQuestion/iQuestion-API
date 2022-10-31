@@ -12,6 +12,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.spine.iquestionapi.service.EntityIdResolver;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +28,12 @@ import lombok.Setter;
 @Table(name = "questionnaire")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIdentityInfo(
+   generator = ObjectIdGenerators.PropertyGenerator.class,
+   property = "id",
+   resolver = EntityIdResolver.class,
+   scope=Questionnaire.class
+   )
 public class Questionnaire {
     @Id
     @GeneratedValue
