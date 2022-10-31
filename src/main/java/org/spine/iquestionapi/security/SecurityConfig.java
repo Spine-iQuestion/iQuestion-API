@@ -30,9 +30,9 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/entry/**").hasRole("CAREGIVER")
-                // TODO: spine admin shoud be able to access this endpoint as well
-                .antMatchers("/questionnaire/**").hasRole("SPINE_USER")
+                // .antMatchers("/entry/**").hasRole("CAREGIVER")
+                // // TODO: spine admin shoud be able to access this endpoint as well
+                // .antMatchers("/questionnaire/**").hasRole("SPINE_USER")
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()

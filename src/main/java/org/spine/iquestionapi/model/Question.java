@@ -29,7 +29,7 @@ scope = Question.class
    )
 public class Question {
     enum Type {
-        OPEN, CLOSED
+        OPEN_CLIENT, CLOSED_CLIENT, OPEN_CAREGIVER
     }
 
     @Id
@@ -37,6 +37,6 @@ public class Question {
     private long id;
     private String label;
     private Type type;
-
+    private boolean directedToCaregiver;
 
 }

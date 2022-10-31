@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
@@ -43,6 +42,7 @@ public class User {
     private String organization;
     @OneToMany(cascade = CascadeType.ALL)
     private List <Entry> entries = new ArrayList<>();
+    @Column(nullable = false)
     private Role role;
 
 }
