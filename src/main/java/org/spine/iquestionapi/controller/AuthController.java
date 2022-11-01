@@ -7,7 +7,6 @@ import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.security.JWTUtil;
-import org.spine.iquestionapi.service.AuthorizationService;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,6 @@ public class AuthController {
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private AuthorizationService authorizationService;
 
     @Autowired private EmailSenderService emailSenderService;
 
