@@ -3,6 +3,7 @@ package org.spine.iquestionapi.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,9 +31,12 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/**").permitAll()
-                // .antMatchers("/entry/**").hasRole("CAREGIVER")
-                // // TODO: spine admin shoud be able to access this endpoint as well
-                // .antMatchers("/questionnaire/**").hasRole("SPINE_USER")
+                .antMatchers("/entry/**").hasRole("CAREGIVER")
+                .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers(HttpMethod.PUT, "/questionnaire/").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/questionnaire/{id}").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers("/user/me").authenticated()
+                .antMatchers("/user/**").hasRole("SPINE_ADMIN")
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()

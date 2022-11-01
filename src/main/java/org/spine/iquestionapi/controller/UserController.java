@@ -1,15 +1,11 @@
 package org.spine.iquestionapi.controller;
 
-import java.util.Objects;
-
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
@@ -24,16 +20,6 @@ public class UserController {
     @GetMapping("/all")
     @ResponseBody
     public User[] getAllUsers(){
-        // Check if logged in user is admin
-        User loggedInUser = authorizationService.getLoggedInUser();
-        if (Objects.isNull(loggedInUser)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not logged in.");
-        }
-
-        if (loggedInUser.getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
-        }
-
         return userRepo.findAll().toArray(new User[0]);
     }
 
@@ -51,11 +37,6 @@ public class UserController {
         if (authorizationService.getLoggedInUser().getId() == id) {
             return userRepo.findById(id).get();
         }
-        
-        // Check if logged in user is admin
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
-        }
 
         return userRepo.findById(id).get();
     }
@@ -64,11 +45,6 @@ public class UserController {
     @PostMapping("/{id}")
     @ResponseBody
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
-        // Check if logged in user is admin
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
-        }
-
         User userToUpdate = userRepo.findById(id).get();
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
@@ -82,10 +58,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
-        if (authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not an admin.");
-        }
-        
         // Get user to delete
         User userToDelete = userRepo.findById(id).get();
         emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);
