@@ -28,33 +28,38 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired private UserRepo userRepo;
-    @Autowired private EmailResetTokenRepo passwordTokenRepo;
-    @Autowired private JWTUtil jwtUtil;
-    @Autowired private AuthenticationManager authManager;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private EmailResetTokenRepo passwordTokenRepo;
+    @Autowired
+    private JWTUtil jwtUtil;
+    @Autowired
+    private AuthenticationManager authManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    @Autowired private EmailSenderService emailSenderService;
+    @Autowired
+    private EmailSenderService emailSenderService;
 
     @PostMapping("/register")
     @ResponseBody
-    public Map<String, String> register(@RequestBody User user){
+    public Map<String, String> register(@RequestBody User user) {
         // Check if email is of a valid type
-        if(!StringUtil.isValidEmail(user.getEmail())){
+        if (!StringUtil.isValidEmail(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
 
         // Check if password is safe
-        if(!StringUtil.isSafePassword(user.getPassword())){
+        if (!StringUtil.isSafePassword(user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is not safe");
         }
 
         // Check if the email already exists
-        if (userRepo.findByEmail(user.getEmail()).isPresent()){
+        if (userRepo.findByEmail(user.getEmail()).isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "This email already exists"
-                    );
+                    "This email already exists");
         }
 
         // Encode the password
@@ -62,6 +67,7 @@ public class AuthController {
 
         // Save encoded password
         user.setPassword(encodedPass);
+        user.setLastPasswordChange(System.currentTimeMillis());
         user = userRepo.save(user);
 
         // Generate and return the token
@@ -71,17 +77,26 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseBody
-    public Map<String, Object> login(@RequestBody LoginCredentials body){
+    public Map<String, Object> login(@RequestBody LoginCredentials body) {
+        long NinetyDaysInMilliSeconds = 7776000000L;
+
         try {
-            UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
+            UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
+                    body.getEmail(),
+                    body.getPassword());
 
             authManager.authenticate(authInputToken);
+            // If the last password change was more than 90 days ago, force the user to
+            // change it
+            User user = userRepo.findByEmail(body.getEmail()).get();
+            if (System.currentTimeMillis() - user.getLastPasswordChange() > NinetyDaysInMilliSeconds) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password expired");
+            }
 
             String token = jwtUtil.generateToken(body.getEmail());
 
             return Collections.singletonMap("jwt-token", token);
-        }catch (AuthenticationException authExc) {
+        } catch (AuthenticationException authExc) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
     }
@@ -91,7 +106,7 @@ public class AuthController {
     public Map<String, Object> requestPasswordReset(@RequestBody String email) {
         // Get user from email
         User user = userRepo.findByEmail(email)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
 
         // Check if user already has token
         if (passwordTokenRepo.findByOwner(user).isPresent()) {
@@ -102,13 +117,14 @@ public class AuthController {
         String token = StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH);
         tokenEntity.setToken(token);
         tokenEntity.setOwner(user);
-        
+
         passwordTokenRepo.save(tokenEntity);
 
         try {
             emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
         } catch (MessagingException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "An internal server error has occurred.");
         }
 
         return Collections.singletonMap("status", "Sent token to email");
@@ -125,6 +141,7 @@ public class AuthController {
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
+        user.setLastPasswordChange(System.currentTimeMillis());
         userRepo.save(user);
         passwordTokenRepo.removeByToken(tokenFromDb.getToken());
 

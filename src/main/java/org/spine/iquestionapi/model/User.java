@@ -20,29 +20,24 @@ import lombok.*;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIdentityInfo(
-   generator = ObjectIdGenerators.PropertyGenerator.class,
-   property = "id",
-   resolver = EntityIdResolver.class,
-    scope = User.class
-   )
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", resolver = EntityIdResolver.class, scope = User.class)
 public class User {
     public enum Role {
         SPINE_ADMIN, SPINE_USER, CAREGIVER
     }
-    
+
     @Id
     @GeneratedValue
     private long id;
     private String name;
-    @Column(unique=true)
+    @Column(unique = true)
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String organization;
     @OneToMany(cascade = CascadeType.ALL)
-    private List <Entry> entries = new ArrayList<>();
+    private List<Entry> entries = new ArrayList<>();
     @Column(nullable = false)
     private Role role;
-
+    private long lastPasswordChange = System.currentTimeMillis();
 }
