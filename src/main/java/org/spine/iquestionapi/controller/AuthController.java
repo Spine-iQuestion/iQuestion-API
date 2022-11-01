@@ -1,6 +1,6 @@
 package org.spine.iquestionapi.controller;
 
-import org.spine.iquestionapi.model.ChangePassword;
+import org.spine.iquestionapi.model.ResetPasswordBody;
 import org.spine.iquestionapi.model.EmailResetToken;
 import org.spine.iquestionapi.model.LoginCredentials;
 import org.spine.iquestionapi.model.User;
@@ -90,28 +90,22 @@ public class AuthController {
 
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset(@RequestBody User user) {
+    public Map<String, Object> requestPasswordReset() {
         // Get logged in user
-        User loggedInUser = authorizationService.getLoggedInUser();
-
-        // Check if user is the same as the logged in user
-        if (!user.getEmail().equals(loggedInUser.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "That's not your email!");
-        }
+        User user = authorizationService.getLoggedInUser();
 
         // Check if user already has token
-        if (passwordTokenRepo.findByOwner(loggedInUser).isPresent()) {
+        if (passwordTokenRepo.findByOwner(user).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You already have a token!");
         }
 
         EmailResetToken tokenEntity = new EmailResetToken();
         String token = StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH);
         tokenEntity.setToken(token);
-        tokenEntity.setOwner(loggedInUser);
+        tokenEntity.setOwner(user);
+        
         passwordTokenRepo.save(tokenEntity);
 
-        // Send token via email
-        // TODO: no template yet for email
         try {
             emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
         } catch (MessagingException e) {
@@ -124,7 +118,7 @@ public class AuthController {
     @PostMapping("/change-password")
     @ResponseBody
     @Transactional
-    public Map<String, Object> changePassword(@RequestBody ChangePassword credentials) {
+    public Map<String, Object> changePassword(@RequestBody ResetPasswordBody credentials) {
         EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
         if (tokenFromDb.getToken() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
