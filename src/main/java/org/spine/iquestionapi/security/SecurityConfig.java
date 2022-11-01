@@ -30,8 +30,6 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/auth/request-password-reset").authenticated()
-                .antMatchers("/auth/change-password").authenticated()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/entry/**").hasRole("CAREGIVER")

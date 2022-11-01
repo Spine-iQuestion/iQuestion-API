@@ -90,9 +90,10 @@ public class AuthController {
 
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset() {
-        // Get logged in user
-        User user = authorizationService.getLoggedInUser();
+    public Map<String, Object> requestPasswordReset(@RequestBody String email) {
+        // Get user from email
+        User user = userRepo.findByEmail(email)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
 
         // Check if user already has token
         if (passwordTokenRepo.findByOwner(user).isPresent()) {
