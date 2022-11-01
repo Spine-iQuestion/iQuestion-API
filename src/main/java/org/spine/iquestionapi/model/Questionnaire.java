@@ -5,11 +5,9 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.spine.iquestionapi.service.EntityIdResolver;
@@ -42,7 +40,5 @@ public class Questionnaire {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Scoremodel scoremodel;
     
 }
