@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,6 +32,8 @@ public class Entry  {
     private Questionnaire questionnaire;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User caregiver;
+    @JoinColumn(name = "caregiver_id")
     @OneToMany(cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
+    private long timestamp;
 }

@@ -40,7 +40,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String organization;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
     private List <Entry> entries = new ArrayList<>();
     @Column(nullable = false)
     private Role role;
