@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 public class TestAuthController {
 
-    @Autowired private AuthController authController;
+    @Autowired
+    private AuthController authController;
 
     @Test
     public void testCorrectLogin() {
@@ -57,4 +58,12 @@ public class TestAuthController {
         assertNotNull(result.get("jwt-token"));
     }
 
+    @Test(expected = ResponseStatusException.class)
+    public void testIncorrectRequestPasswordReset() {
+        // Arrange
+        String email = "invalidEmail@example.com";
+
+        // Act
+        authController.requestPasswordReset(email);
+    }
 }
