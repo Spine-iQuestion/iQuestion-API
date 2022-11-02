@@ -6,8 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class LoginCredentials {
-    private String email;
-    private String password;
+public class ResetPasswordBody {
+    private String token;
+    private String newPassword;
 }

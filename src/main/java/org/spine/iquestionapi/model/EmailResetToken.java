@@ -6,19 +6,18 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "password_tokens")
+@Table(name = "email_reset_token")
 @AllArgsConstructor
 @NoArgsConstructor
 
-// TODO: maybe this isn't the best class name for "token credentials"
-public class PasswordToken {
+public class EmailResetToken {
     @Id
     @GeneratedValue
     private long id;
     private String token;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(unique = true, nullable = false)
     private User owner;
-    private String password;
 
     public static int TOKEN_LENGTH = 32;
 }

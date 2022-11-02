@@ -3,6 +3,7 @@ package org.spine.iquestionapi.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,8 +30,12 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                // TODO: Add roles to paths here
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers("/entry/**").hasRole("CAREGIVER")
+                .antMatchers(HttpMethod.PUT, "/questionnaire/").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/questionnaire/{id}").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
+                .antMatchers("/user/me").authenticated()
                 .antMatchers("/user/**").hasRole("SPINE_ADMIN")
                 .and()
                 .userDetailsService(uds)
