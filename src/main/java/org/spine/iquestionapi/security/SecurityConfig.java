@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/entry/**").hasRole("CAREGIVER")
+                .antMatchers("/questionnaire/all").authenticated()
                 .antMatchers(HttpMethod.PUT, "/questionnaire/").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/questionnaire/{id}").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/user/me").authenticated()
