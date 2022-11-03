@@ -5,6 +5,7 @@ import javax.persistence.*;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class User {
     private String password;
     private String organization;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
+    @JsonIgnore
     private List <Entry> entries = new ArrayList<>();
     @Column(nullable = false)
     private Role role;

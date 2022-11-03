@@ -31,8 +31,8 @@ public class Entry  {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Questionnaire questionnaire;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private User caregiver;
     @JoinColumn(name = "caregiver_id")
+    private User caregiver;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
     private long timestamp;
