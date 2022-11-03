@@ -85,11 +85,12 @@ public class EntryController {
     @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
     public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") long id) throws FileNotFoundException {
-        if (!questionnaireRepo.findById(id).isPresent()){
+     Questionnaire questionnaire = questionnaireRepo.findById(id)
+        if (!questionnaire.isPresent()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
         }
-        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
-        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
+       
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire.get()).get();
 
         String csvString = csvUtil.entryToCsv(entryList, id);
         InputStream targetStream = new ByteArrayInputStream(csvString.getBytes());
