@@ -18,6 +18,13 @@ public class EntryController {
     @Autowired private EntryRepo entryRepo;
     @Autowired private AuthorizationService authorizationService;
 
+    @GetMapping("/all")
+    public List<Entry> getAllEntries() {
+        User loggedInUser = authorizationService.getLoggedInUser();
+        List<Entry> entries = loggedInUser.getEntries();
+        return entries;
+    }
+
     // Get entry by id
     @GetMapping("/{id}")
     @ResponseBody
@@ -57,6 +64,7 @@ public class EntryController {
     public Entry createEntry(@RequestBody Entry entry){
         User loggedInUser = authorizationService.getLoggedInUser();
         entry.setCaregiver(loggedInUser);
+        entry.setTimestamp(System.currentTimeMillis());
         return entryRepo.save(entry);
     }
 }
