@@ -1,13 +1,25 @@
 package org.spine.iquestionapi.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spine.iquestionapi.model.Entry;
+import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EntryRepo;
+import org.spine.iquestionapi.repository.QuestionnaireRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
+import org.spine.iquestionapi.util.CsvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,7 +28,9 @@ import org.springframework.web.server.ResponseStatusException;
 @ResponseStatus(HttpStatus.OK)
 public class EntryController {
     @Autowired private EntryRepo entryRepo;
+    @Autowired private QuestionnaireRepo questionnaireRepo;
     @Autowired private AuthorizationService authorizationService;
+    CsvUtil csvUtil = new CsvUtil();
 
     @GetMapping("/all")
     public List<Entry> getAllEntries() {
@@ -56,6 +70,36 @@ public class EntryController {
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
+    }
+
+    @GetMapping("/export/{questionnaireId}/json")
+    @ResponseBody
+    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") long id){
+        if (!questionnaireRepo.findById(id).isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
+        }
+        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
+
+        return entryList;
+    }
+
+    @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
+    @ResponseBody
+    public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") long id) throws FileNotFoundException {
+        if (!questionnaireRepo.findById(id).isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
+        }
+        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
+
+        File csvFile = csvUtil.entryToCsv(entryList, id);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(csvFile));
+
+        return ResponseEntity.ok()
+                .contentLength(csvFile.length())
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(resource);
     }
 
     // Create an entry
