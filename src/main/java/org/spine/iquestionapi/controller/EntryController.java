@@ -91,14 +91,20 @@ public class EntryController {
         Questionnaire questionnaire = questionnaireRepo.findById(id).get();
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
 
-        String csvString = csvUtil.entryToCsv(entryList, id);
-        InputStream targetStream = new ByteArrayInputStream(csvString.getBytes());
-        InputStreamResource resource = new InputStreamResource(targetStream);
+        String csvString = null;
+        try {
+            csvString = csvUtil.entryToCsv(entryList, id);
+            InputStream targetStream = new ByteArrayInputStream(csvString.getBytes());
+            InputStreamResource resource = new InputStreamResource(targetStream);
 
-        return ResponseEntity.ok()
-                .contentLength(csvString.length())
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(resource);
+            return ResponseEntity.ok()
+                    .contentLength(csvString.length())
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .body(resource);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
     }
 
     // Create an entry

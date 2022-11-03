@@ -21,10 +21,9 @@ public class CsvUtil {
     private static final Logger log = getLogger(CsvUtil.class);
 
 
-    public String entryToCsv(ArrayList<Entry> entries, long id) {
+    public String entryToCsv(ArrayList<Entry> entries, long id) throws Exception {
 
         String csvString = null;
-//        File csvFile = new File("export_" + id  + ".csv");
         try{
             StringWriter stringWriter = new StringWriter();
             CSVWriter csvWriter = new CSVWriter(stringWriter);
@@ -64,8 +63,7 @@ public class CsvUtil {
             return stringWriter.toString();
         }
         catch (IOException e){
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
-        return null;
     }
 }
