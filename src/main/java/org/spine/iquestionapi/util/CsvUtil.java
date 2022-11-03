@@ -1,29 +1,19 @@
 package org.spine.iquestionapi.util;
 
 import com.opencsv.CSVWriter;
-import org.apache.logging.log4j.Logger;
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Question;
 import org.spine.iquestionapi.model.Segment;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
-
-
 
 public class CsvUtil {
-    private static final Logger log = getLogger(CsvUtil.class);
-
-
     public String entryToCsv(ArrayList<Entry> entries, long id) throws Exception {
 
-        String csvString = null;
         try{
             StringWriter stringWriter = new StringWriter();
             CSVWriter csvWriter = new CSVWriter(stringWriter);
