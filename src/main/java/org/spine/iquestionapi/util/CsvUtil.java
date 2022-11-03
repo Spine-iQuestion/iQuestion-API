@@ -21,12 +21,13 @@ public class CsvUtil {
     private static final Logger log = getLogger(CsvUtil.class);
 
 
-    public File entryToCsv(ArrayList<Entry> entries, long id) {
+    public String entryToCsv(ArrayList<Entry> entries, long id) {
 
-        File csvFile = new File("export_" + id  + ".csv");
+        String csvString = null;
+//        File csvFile = new File("export_" + id  + ".csv");
         try{
-            FileWriter fileWriter = new FileWriter(csvFile);
-            CSVWriter csvWriter = new CSVWriter(fileWriter);
+            StringWriter stringWriter = new StringWriter();
+            CSVWriter csvWriter = new CSVWriter(stringWriter);
             List<String[]> data = new ArrayList<String[]>();
 
             ArrayList<String> header = new ArrayList<>(
@@ -60,10 +61,11 @@ public class CsvUtil {
 
             csvWriter.writeAll(data);
             csvWriter.close();
+            return stringWriter.toString();
         }
         catch (IOException e){
             e.printStackTrace();
         }
-        return csvFile;
+        return null;
     }
 }

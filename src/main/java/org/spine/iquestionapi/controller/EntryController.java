@@ -1,8 +1,6 @@
 package org.spine.iquestionapi.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,11 +91,12 @@ public class EntryController {
         Questionnaire questionnaire = questionnaireRepo.findById(id).get();
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
 
-        File csvFile = csvUtil.entryToCsv(entryList, id);
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(csvFile));
+        String csvString = csvUtil.entryToCsv(entryList, id);
+        InputStream targetStream = new ByteArrayInputStream(csvString.getBytes());
+        InputStreamResource resource = new InputStreamResource(targetStream);
 
         return ResponseEntity.ok()
-                .contentLength(csvFile.length())
+                .contentLength(csvString.length())
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(resource);
     }
