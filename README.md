@@ -1,5 +1,8 @@
 # I.Question API
 
+## Beschrijving
+Deze applicatie verschaft een REST API voor het beheren van o.a. vragenlijsten, gebruikers en ingezonden formulieren voor Spine (CKM).
+
 ## Installatie
 
 ### Stap 1
