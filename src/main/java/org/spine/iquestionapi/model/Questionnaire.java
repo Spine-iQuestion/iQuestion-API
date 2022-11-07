@@ -20,6 +20,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * A questionnaire is a set of questions to be answered by a caregiver, created by a Spine user
+ */
 @Getter
 @Setter
 @Entity
@@ -33,11 +36,20 @@ import lombok.Setter;
    scope=Questionnaire.class
    )
 public class Questionnaire {
+    /**
+     * The id of the questionnaire
+     */
     @Id
     @GeneratedValue
     private long id;
+    /**
+     * The name of the questionnaire
+     */
     @NotNull
     private String name;
+    /**
+     * The questions in the questionnaire
+     */
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();
     

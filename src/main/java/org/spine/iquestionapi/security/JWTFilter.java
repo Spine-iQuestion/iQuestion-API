@@ -14,21 +14,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The filter for the JWT
+ */
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
     @Autowired private MyUserDetailsService userDetailsService;
     @Autowired private JWTUtil jwtUtil;
 
-    @Override
     /**
      * Every request is filtered by this method. The function checks if the request has a valid jwt token.
      * @param request the request
      * @param response the response
      * @param filterChain the filter chain
-     * @throws ServletException
-     * @throws IOException
+     * @throws ServletException if the filter chain fails
+     * @throws IOException an io exception
      */
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {

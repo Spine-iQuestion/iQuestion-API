@@ -7,7 +7,9 @@ import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
+/**
+ * The controller for the user
+ */
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -15,34 +17,34 @@ public class UserController {
     @Autowired private UserRepo userRepo;
     @Autowired private EmailResetTokenRepo emailResetTokenRepo;
     @Autowired private AuthorizationService authorizationService;
-
-    @GetMapping("/all")
-    @ResponseBody
+    
     /**
      * Get all users
      * @return a list of all users
      */
+    @GetMapping("/all")
+    @ResponseBody
     public User[] getAllUsers(){
         return userRepo.findAll().toArray(new User[0]);
     }
 
-    @GetMapping("/me")
-    @ResponseBody
     /**
      * Get the logged in user
      * @return the logged in user
      */
+    @GetMapping("/me")
+    @ResponseBody
     public User getLoggedInUser(){
         return authorizationService.getLoggedInUser();
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
     /**
      * Get a user by id
      * @param id the id of the user
      * @return the user
      */
+    @GetMapping("/{id}")
+    @ResponseBody
     public User getUserById(@PathVariable(value="id") long id){
         // Check if user is looking for himself
         if (authorizationService.getLoggedInUser().getId() == id) {
@@ -52,14 +54,14 @@ public class UserController {
         return userRepo.findById(id).get();
     }
 
-    @PostMapping("/{id}")
-    @ResponseBody
     /**
      * Update a user
      * @param id the id of the user to be updated
      * @param user the user to be updated
      * @return the updated user
      */
+    @PostMapping("/{id}")
+    @ResponseBody
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).get();
         // Update fields that are given
@@ -70,13 +72,12 @@ public class UserController {
         return userRepo.save(userToUpdate);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseBody
     /**
      * Delete a user
      * @param id the id of the user to be deleted
-     * @return the deleted user
      */
+    @DeleteMapping("/{id}")
+    @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
         // Get user to delete
         User userToDelete = userRepo.findById(id).get();

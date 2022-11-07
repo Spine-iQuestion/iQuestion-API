@@ -1,5 +1,8 @@
 package org.spine.iquestionapi.util;
 
+/**
+ * The class for string utilities
+ */
 public class StringUtil {
     /**
      * Generate a random string of a given length

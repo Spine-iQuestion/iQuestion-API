@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * The user details service
+ */
 @Component
 public class MyUserDetailsService implements UserDetailsService {
 

@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The controller for the questionnaire
+ */
 @RestController
 @RequestMapping("/questionnaire")
 @ResponseStatus(HttpStatus.OK)
@@ -13,44 +16,43 @@ public class QuestionnaireController {
 
     @Autowired private QuestionnaireRepo questionnaireRepo;
 
-    @GetMapping("/all")
     /**
      * Get all questionnaires
      * @return a list of all questionnaires
      */
+    @GetMapping("/all")
     public Questionnaire[] getAllQuestionnaires(){
         return questionnaireRepo.findAll().toArray(new Questionnaire[0]);
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
     /**
      * Get a questionnaire by id
      * @param id the id of the questionnaire
      * @return the questionnaire
      */
+    @GetMapping("/{id}")
+    @ResponseBody
     public Questionnaire getQuestionnaireById(@PathVariable(value="id") long id){
         return questionnaireRepo.findById(id).get();
     }
 
-    @PutMapping("/")
-    @ResponseBody
     /**
      * Create a questionnaire
      * @param questionnaire the questionnaire to be created
      * @return the created questionnaire
      */
+    @PutMapping("/")
+    @ResponseBody
     public Questionnaire createQuestionnaire(@RequestBody Questionnaire questionnaire){
         return questionnaireRepo.save(questionnaire);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseBody
     /**
      * Delete a questionnaire
      * @param id the id of the questionnaire to be deleted
-     * @return the deleted questionnaire
      */
+    @DeleteMapping("/{id}")
+    @ResponseBody
     public void deleteQuestionnaire(@PathVariable(value="id") long id){
         questionnaireRepo.deleteById(id);
     }

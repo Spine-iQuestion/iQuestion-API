@@ -15,6 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * The question on a questionnaire
+ */
 @Getter
 @Setter
 @Entity
@@ -32,9 +35,18 @@ public class Question {
         OPEN_CLIENT, CLOSED_CLIENT, OPEN_CAREGIVER
     }
 
+    /**
+     * The id of the question
+     */
     @Id
     @GeneratedValue
     private long id;
+    /**
+     * The question
+     */
     private String label;
+    /**
+     * The type of the question
+     */
     private Type type;
 }

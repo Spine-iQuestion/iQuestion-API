@@ -3,6 +3,9 @@ package org.spine.iquestionapi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * The main (begin) class of the application
+ */
 @SpringBootApplication
 public class IQuestionApiApplication {
 

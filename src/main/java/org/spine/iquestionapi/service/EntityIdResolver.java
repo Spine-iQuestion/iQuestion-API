@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.ObjectIdResolver;
 
 import javax.persistence.EntityManager;
 
-
+/**
+ * This class is used to resolve the id of an entity to the entity itself
+ */
 public class EntityIdResolver
         implements ObjectIdResolver {
 

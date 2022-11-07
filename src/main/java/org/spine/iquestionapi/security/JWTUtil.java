@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * The utility class for the JWT tokens
+ */
 @Component
 public class JWTUtil {
 

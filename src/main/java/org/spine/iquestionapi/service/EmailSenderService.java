@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * The service for sending emails
+ */
 @Service
 public class EmailSenderService {
     @Autowired
@@ -19,7 +22,7 @@ public class EmailSenderService {
      * @param toEmail the email of the recipient
      * @param subject the subject of the email
      * @param token the token to be sent
-     * @throws MessagingException
+     * @throws MessagingException if the email could not be sent
      */
     public void sendSimpleEmail(String toEmail, String subject, String token) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
