@@ -24,6 +24,13 @@ public class SecurityConfig {
     @Autowired private MyUserDetailsService uds;
 
     @Bean
+    /**
+     * This filter chain is used to filter every request.
+     * It checks roles and headers.
+     * @param http the security config 
+     * @return the filter chain
+     * @throws Exception
+     */
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .httpBasic().disable()
@@ -56,11 +63,20 @@ public class SecurityConfig {
     }
 
     @Bean
+    /**
+     * This bean is used to fetch the preconfigured password encoder
+     */
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
+    /**
+     * This bean is used to fetch the authentication manager
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception
+     */
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }

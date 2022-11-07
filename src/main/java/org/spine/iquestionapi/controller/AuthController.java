@@ -38,6 +38,11 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseBody
+    /**
+     * Register a new user
+     * @param user the user to be registered
+     * @return the generated jwt token
+     */
     public Map<String, String> register(@RequestBody User user){
         // Check if email is of a valid type
         if(!StringUtil.isValidEmail(user.getEmail())){
@@ -71,6 +76,11 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseBody
+    /**
+     * Login a user
+     * @param credentials the user credentials
+     * @return the generated jwt token
+     */
     public Map<String, Object> login(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
@@ -88,6 +98,11 @@ public class AuthController {
 
     @PostMapping("/request-password-reset")
     @ResponseBody
+    /**
+     * Request a password reset
+     * @param email the email of the user
+     * @return success message
+     */
     public Map<String, Object> requestPasswordReset(@RequestBody String email) {
         // Get user from email
         User user = userRepo.findByEmail(email)
@@ -117,6 +132,11 @@ public class AuthController {
     @PostMapping("/change-password")
     @ResponseBody
     @Transactional
+    /**
+     * Change the password of a user using the token generated with request-password-reset
+     * @param credentials the token and the new password
+     * @return success message
+     */
     public Map<String, Object> changePassword(@RequestBody ResetPasswordBody credentials) {
         EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
         if (tokenFromDb.getToken() == null) {

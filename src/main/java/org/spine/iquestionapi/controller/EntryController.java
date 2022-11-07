@@ -30,15 +30,23 @@ public class EntryController {
     CsvUtil csvUtil = new CsvUtil();
 
     @GetMapping("/all")
+    /**
+     * Get all entries
+     * @return a list of all entries
+     */
     public List<Entry> getAllEntries() {
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
         return entries;
     }
 
-    // Get entry by id
     @GetMapping("/{id}")
     @ResponseBody
+    /**
+     * Get an entry by id
+     * @param id the id of the entry
+     * @return the entry
+     */
     public Entry getEntryById(@PathVariable(value="id") long id){
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
@@ -52,9 +60,12 @@ public class EntryController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
     }
 
-    // Delete an entry
     @DeleteMapping("/{id}")
     @ResponseBody
+    /**
+     * Delete an entry by id
+     * @param id the id of the entry
+     */
     public void deleteEntry(@PathVariable(value="id") long id){
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
@@ -71,6 +82,11 @@ public class EntryController {
 
     @GetMapping("/export/{questionnaireId}/json")
     @ResponseBody
+    /**
+     * Export entries of a questionnaire to a json file
+     * @param questionnaireId the id of the questionnaire
+     * @return the json file
+     */
     public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") long id){
         if (!questionnaireRepo.findById(id).isPresent()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
@@ -83,6 +99,11 @@ public class EntryController {
 
     @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
+    /**
+     * Export entries of a questionnaire to a csv file
+     * @param questionnaireId the id of the questionnaire
+     * @return the csv file
+     */
     public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") long id) throws FileNotFoundException {
         if (!questionnaireRepo.findById(id).isPresent()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
@@ -106,9 +127,13 @@ public class EntryController {
 
     }
 
-    // Create an entry
     @PutMapping("/")
     @ResponseBody
+    /**
+     * Create an entry
+     * @param entry the entry to be created
+     * @return the created entry
+     */
     public Entry createEntry(@RequestBody Entry entry){
         User loggedInUser = authorizationService.getLoggedInUser();
         entry.setCaregiver(loggedInUser);

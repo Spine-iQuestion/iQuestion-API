@@ -16,22 +16,33 @@ public class UserController {
     @Autowired private EmailResetTokenRepo emailResetTokenRepo;
     @Autowired private AuthorizationService authorizationService;
 
-    // Get all users
     @GetMapping("/all")
     @ResponseBody
+    /**
+     * Get all users
+     * @return a list of all users
+     */
     public User[] getAllUsers(){
         return userRepo.findAll().toArray(new User[0]);
     }
 
     @GetMapping("/me")
     @ResponseBody
+    /**
+     * Get the logged in user
+     * @return the logged in user
+     */
     public User getLoggedInUser(){
         return authorizationService.getLoggedInUser();
     }
 
-    // Get a user by id
     @GetMapping("/{id}")
     @ResponseBody
+    /**
+     * Get a user by id
+     * @param id the id of the user
+     * @return the user
+     */
     public User getUserById(@PathVariable(value="id") long id){
         // Check if user is looking for himself
         if (authorizationService.getLoggedInUser().getId() == id) {
@@ -41,9 +52,14 @@ public class UserController {
         return userRepo.findById(id).get();
     }
 
-    // Update a user
     @PostMapping("/{id}")
     @ResponseBody
+    /**
+     * Update a user
+     * @param id the id of the user to be updated
+     * @param user the user to be updated
+     * @return the updated user
+     */
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).get();
         // Update fields that are given
@@ -54,9 +70,13 @@ public class UserController {
         return userRepo.save(userToUpdate);
     }
 
-    // Delete a user
     @DeleteMapping("/{id}")
     @ResponseBody
+    /**
+     * Delete a user
+     * @param id the id of the user to be deleted
+     * @return the deleted user
+     */
     public void deleteUser(@PathVariable(value="id") long id){
         // Get user to delete
         User userToDelete = userRepo.findById(id).get();

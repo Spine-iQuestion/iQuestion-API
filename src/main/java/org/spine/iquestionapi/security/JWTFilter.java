@@ -21,6 +21,14 @@ public class JWTFilter extends OncePerRequestFilter {
     @Autowired private JWTUtil jwtUtil;
 
     @Override
+    /**
+     * Every request is filtered by this method. The function checks if the request has a valid jwt token.
+     * @param request the request
+     * @param response the response
+     * @param filterChain the filter chain
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {

@@ -13,29 +13,44 @@ public class QuestionnaireController {
 
     @Autowired private QuestionnaireRepo questionnaireRepo;
 
-    // Get all questionnaires
     @GetMapping("/all")
+    /**
+     * Get all questionnaires
+     * @return a list of all questionnaires
+     */
     public Questionnaire[] getAllQuestionnaires(){
         return questionnaireRepo.findAll().toArray(new Questionnaire[0]);
     }
 
-    // Get a questionnaire by id
     @GetMapping("/{id}")
     @ResponseBody
+    /**
+     * Get a questionnaire by id
+     * @param id the id of the questionnaire
+     * @return the questionnaire
+     */
     public Questionnaire getQuestionnaireById(@PathVariable(value="id") long id){
         return questionnaireRepo.findById(id).get();
     }
 
-    // Create a questionnaire
     @PutMapping("/")
     @ResponseBody
+    /**
+     * Create a questionnaire
+     * @param questionnaire the questionnaire to be created
+     * @return the created questionnaire
+     */
     public Questionnaire createQuestionnaire(@RequestBody Questionnaire questionnaire){
         return questionnaireRepo.save(questionnaire);
     }
 
-    // Delete a questionnaire
     @DeleteMapping("/{id}")
     @ResponseBody
+    /**
+     * Delete a questionnaire
+     * @param id the id of the questionnaire to be deleted
+     * @return the deleted questionnaire
+     */
     public void deleteQuestionnaire(@PathVariable(value="id") long id){
         questionnaireRepo.deleteById(id);
     }

@@ -12,6 +12,13 @@ import java.util.List;
 
 
 public class CsvUtil {
+    /**
+     * Write a list of entries to a csv file
+     * @param entries the entries
+     * @param id the id of the question
+     * @return the file
+     * @throws Exception
+     */
     public String entryToCsv(ArrayList<Entry> entries, long id) throws Exception {
 
         try{
