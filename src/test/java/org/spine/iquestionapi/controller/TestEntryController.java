@@ -25,6 +25,26 @@ import static org.junit.Assert.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestEntryController {
+    @Test
+    public void testCorrectEntry() {
+        // Arrange
+        long id = 234;
+
+        // Act
+        Entry result = entryController.getEntryById(id);
+
+        // Assert
+        assertNotNull(result);
+    }
+
+    @Test(expected = ResponseStatusException.class)
+    public void testIncorrectEntry() {
+        // Arrange
+        long id = -1;
+
+        entryController.getEntryById(id);
+    }
+}
 
     @Autowired private EntryController entryController;
 
