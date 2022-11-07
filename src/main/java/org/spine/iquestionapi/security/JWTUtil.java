@@ -11,12 +11,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * The utility class for the JWT tokens
+ */
 @Component
 public class JWTUtil {
 
     @Value("${jwt_secret}")
     private String secret;
 
+    /**
+     * Creates a JWT token for the given email
+     * @param email the email
+     * @return the JWT token
+     * @throws IllegalArgumentException if the email is null or empty
+     * @throws JWTCreationException if the token cannot be created for some reason
+     */
     public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
@@ -26,6 +36,12 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(secret));
     }
 
+    /**
+     * Validates the given JWT token and returns the email
+     * @param token the token
+     * @return the email
+     * @throws JWTVerificationException if the token is invalid
+     */
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User Details")

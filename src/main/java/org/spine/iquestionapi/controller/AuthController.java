@@ -24,6 +24,9 @@ import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * The controller for authentication
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -36,6 +39,11 @@ public class AuthController {
 
     @Autowired private EmailSenderService emailSenderService;
 
+    /**
+     * Register a new user
+     * @param user the user to be registered
+     * @return the generated jwt token
+     */
     @PostMapping("/register")
     @ResponseBody
     public Map<String, String> register(@RequestBody User user){
@@ -69,6 +77,11 @@ public class AuthController {
         return Collections.singletonMap("jwt-token", token);
     }
 
+    /**
+     * Login a user
+     * @param body the user credentials
+     * @return the generated jwt token
+     */
     @PostMapping("/login")
     @ResponseBody
     public Map<String, Object> login(@RequestBody LoginCredentials body){
@@ -86,6 +99,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * Request a password reset
+     * @param email the email of the user
+     * @return success message
+     */
     @PostMapping("/request-password-reset")
     @ResponseBody
     public Map<String, Object> requestPasswordReset(@RequestBody String email) {
@@ -114,6 +132,11 @@ public class AuthController {
         return Collections.singletonMap("status", "Sent token to email");
     }
 
+    /**
+     * Change the password of a user using the token generated with request-password-reset
+     * @param credentials the token and the new password
+     * @return success message
+     */
     @PostMapping("/change-password")
     @ResponseBody
     @Transactional

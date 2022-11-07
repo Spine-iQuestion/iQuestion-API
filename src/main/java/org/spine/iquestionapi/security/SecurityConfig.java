@@ -16,6 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * The security configuration
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,6 +26,13 @@ public class SecurityConfig {
     @Autowired private JWTFilter filter;
     @Autowired private MyUserDetailsService uds;
 
+    /**
+     * This filter chain is used to filter every request.
+     * It checks roles and headers.
+     * @param http the security config 
+     * @return the filter chain
+     * @throws Exception if the filter chain fails
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -55,11 +65,21 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * This bean is used to fetch the preconfigured password encoder
+     * @return the password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * This bean is used to fetch the authentication manager
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager
+     * @throws Exception if the authentication manager cannot be created
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

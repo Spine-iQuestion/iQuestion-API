@@ -15,6 +15,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
+/**
+ * The user of the application
+ */
 @Getter
 @Setter
 @Entity
@@ -28,22 +31,51 @@ import lombok.*;
     scope = User.class
    )
 public class User {
+    /**
+     * The roels a user can have
+     */
     public enum Role {
-        SPINE_ADMIN, SPINE_USER, CAREGIVER
+        /** A Spine admin */
+        SPINE_ADMIN,
+        /** A Spine user */
+        SPINE_USER,
+        /** A caregiver */
+        CAREGIVER
     }
     
+    /**
+     * The id of the user
+     */
     @Id
     @GeneratedValue
     private long id;
+    /**
+     * The name of the user
+     */
     private String name;
+    /**
+     * The email of the user
+     */
     @Column(unique=true)
     private String email;
+    /**
+     * The password of the user
+     */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    /**
+     * The organization of the user
+     */
     private String organization;
+    /**
+     * The entries a user filled in
+     */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
     @JsonIgnore
     private List <Entry> entries = new ArrayList<>();
+    /**
+     * The role of the user
+     */
     @Column(nullable = false)
     private Role role;
 

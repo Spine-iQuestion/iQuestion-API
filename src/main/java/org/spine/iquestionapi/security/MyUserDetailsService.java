@@ -12,12 +12,21 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Optional;
 
+/**
+ * The user details service
+ */
 @Component
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired private UserRepo userRepo;
 
     @Override
+    /**
+     * Load a user by username
+     * @param email the email of the user
+     * @return the user details
+     * @throws UsernameNotFoundException if the user is not found
+     */
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userRes = userRepo.findByEmail(email);
         if(userRes.isEmpty())

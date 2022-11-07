@@ -7,6 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * The repository for the entry
+ */
 public interface EntryRepo extends JpaRepository<Entry, Long> {
+    /**
+     * Find filled in entries by a questionnaire
+     * @param questionnaire the questionnaire
+     * @return the entries
+     */
     public Optional<ArrayList<Entry>> findByQuestionnaire(Questionnaire questionnaire);
 }
