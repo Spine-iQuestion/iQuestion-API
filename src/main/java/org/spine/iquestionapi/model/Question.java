@@ -37,6 +37,4 @@ public class Question {
     private long id;
     private String label;
     private Type type;
-    private boolean directedToCaregiver;
-
 }

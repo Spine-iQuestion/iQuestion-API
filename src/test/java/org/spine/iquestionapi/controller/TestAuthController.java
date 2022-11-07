@@ -38,7 +38,11 @@ public class TestAuthController {
         // Arrange
         LoginCredentials loginCredentials = new LoginCredentials("testcaregiver", "BADPASSWORD");
 
-        authController.login(loginCredentials);
+        // Act
+        Map<String, Object> result = authController.login(loginCredentials);
+
+        //Assert
+        assertNotNull(result.get("jwt-token"));
     }
 
     @Test
