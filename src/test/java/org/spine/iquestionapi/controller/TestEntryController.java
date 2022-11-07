@@ -25,6 +25,9 @@ import static org.junit.Assert.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class TestEntryController {
+
+    @Autowired private EntryController entryController;
+    
     @Test
     public void testCorrectEntry() {
         // Arrange
@@ -44,9 +47,7 @@ public class TestEntryController {
 
         entryController.getEntryById(id);
     }
-}
 
-    @Autowired private EntryController entryController;
 
     @BeforeEach
 
