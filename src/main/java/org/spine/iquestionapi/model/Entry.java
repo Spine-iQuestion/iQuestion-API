@@ -40,12 +40,6 @@ public class Entry  {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Questionnaire questionnaire;
     /**
-     * The user who filled in the questionnaire
-     */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "caregiver_id")
-    private User caregiver;
-    /**
      * The answers to the questions in the questionnaire
      */
     @OneToMany(cascade = CascadeType.ALL)

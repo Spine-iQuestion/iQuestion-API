@@ -29,7 +29,7 @@ public class CsvUtil {
             List<String[]> data = new ArrayList<String[]>();
 
             ArrayList<String> header = new ArrayList<>(
-                    Arrays.asList("id", "caregiver", "timestamp"));;
+                    Arrays.asList("id", "timestamp"));;
 
             for (Segment segment:  entries.get(0).getQuestionnaire().getSegments()){
                 List<Question> vragen = segment.getQuestions();
@@ -46,7 +46,6 @@ public class CsvUtil {
                 ArrayList<String> entryData = new ArrayList<>();
                 Long entryId = entry.getId();
                 entryData.add(entryId.toString());
-                entryData.add(entry.getCaregiver().getName());
                 Long entryTimeStamp = entry.getTimestamp();
                 entryData.add(entryTimeStamp.toString());
                 for (Segment segment: entry.getQuestionnaire().getSegments()){

@@ -139,8 +139,6 @@ public class EntryController {
     @PutMapping("/")
     @ResponseBody
     public Entry createEntry(@RequestBody Entry entry){
-        User loggedInUser = authorizationService.getLoggedInUser();
-        entry.setCaregiver(loggedInUser);
         entry.setTimestamp(System.currentTimeMillis());
         return entryRepo.save(entry);
     }
