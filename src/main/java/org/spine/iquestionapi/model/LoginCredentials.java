@@ -11,6 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class LoginCredentials {
+    public static final int MIN_LENGTH_PASSWORD = 8;
+
     /**
      * The username of the user
      */
