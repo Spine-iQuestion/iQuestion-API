@@ -68,6 +68,10 @@ public class User {
      */
     private String organization;
     /**
+     * The state of activation of the account
+     */
+    private boolean enabled = false;
+    /**
      * The entries a user filled in
      */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")

@@ -5,7 +5,9 @@ import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * The controller for the user
@@ -48,10 +50,9 @@ public class UserController {
     public User getUserById(@PathVariable(value="id") long id){
         // Check if user is looking for himself
         if (authorizationService.getLoggedInUser().getId() == id) {
-            return userRepo.findById(id).get();
+            return userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
         }
-
-        return userRepo.findById(id).get();
+      return null;
     }
 
     /**
@@ -63,7 +64,7 @@ public class UserController {
     @PostMapping("/{id}")
     @ResponseBody
     public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
-        User userToUpdate = userRepo.findById(id).get();
+        User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
         if (user.getRole() != null) userToUpdate.setRole(user.getRole());
@@ -80,7 +81,7 @@ public class UserController {
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") long id){
         // Get user to delete
-        User userToDelete = userRepo.findById(id).get();
+        User userToDelete = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
         emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);
 
         // Remove user from userrepo

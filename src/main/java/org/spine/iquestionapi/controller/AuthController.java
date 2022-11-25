@@ -52,10 +52,6 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
 
-        // Check if password is safe
-        if(!StringUtil.isSafePassword(user.getPassword())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is not safe");
-        }
 
         // Check if the email already exists
         if (userRepo.findByEmail(user.getEmail()).isPresent()){
@@ -64,17 +60,21 @@ public class AuthController {
                     "This email already exists"
                     );
         }
-
-        // Encode the password
-        String encodedPass = passwordEncoder.encode(user.getPassword());
-
-        // Save encoded password
-        user.setPassword(encodedPass);
         user = userRepo.save(user);
+        EmailResetToken tokenEntity = new EmailResetToken();
+        String token = StringUtil.generateRandomString(EmailResetToken.TOKEN_LENGTH);
+        tokenEntity.setToken(token);
+        tokenEntity.setOwner(user);
 
-        // Generate and return the token
-        String token = jwtUtil.generateToken(user.getEmail());
-        return Collections.singletonMap("jwt-token", token);
+        passwordTokenRepo.save(tokenEntity);
+        try {
+            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error has occurred.");
+        }
+
+
+        return Collections.singletonMap("status", "succes");
     }
 
     /**
@@ -88,7 +88,10 @@ public class AuthController {
         try {
             UsernamePasswordAuthenticationToken authInputToken =
                     new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
-
+            User user = userRepo.findByEmail(body.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
+            if (!user.isEnabled()){
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not enabled.");
+            }
             authManager.authenticate(authInputToken);
 
             String token = jwtUtil.generateToken(body.getEmail());
@@ -141,13 +144,11 @@ public class AuthController {
     @ResponseBody
     @Transactional
     public Map<String, Object> changePassword(@RequestBody ResetPasswordBody credentials) {
-        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
-        if (tokenFromDb.getToken() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
-        }
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token not found."));
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
+        user.setEnabled(true);
         userRepo.save(user);
         passwordTokenRepo.removeByToken(tokenFromDb.getToken());
 
