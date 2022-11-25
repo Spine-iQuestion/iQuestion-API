@@ -91,11 +91,8 @@ public class EntryController {
     @GetMapping("/export/{questionnaireId}/json")
     @ResponseBody
     public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") long id){
-        if (!questionnaireRepo.findById(id).isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
-        }
-        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
-        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
+        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
 
         return entryList;
     }
@@ -109,11 +106,8 @@ public class EntryController {
     @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
     public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") long id) throws FileNotFoundException {
-        if (!questionnaireRepo.findById(id).isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found");
-        }
-        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
-        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).get();
+        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
 
         String csvString = null;
         try {

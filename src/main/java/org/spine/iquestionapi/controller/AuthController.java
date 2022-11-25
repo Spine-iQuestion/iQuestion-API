@@ -144,10 +144,7 @@ public class AuthController {
     @ResponseBody
     @Transactional
     public Map<String, Object> changePassword(@RequestBody ResetPasswordBody credentials) {
-        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).get();
-        if (tokenFromDb.getToken() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token not found or invalid.");
-        }
+        EmailResetToken tokenFromDb = passwordTokenRepo.findByToken(credentials.getToken()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token not found."));
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
