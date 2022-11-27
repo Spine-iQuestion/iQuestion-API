@@ -21,6 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.MessagingException;
 
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -90,12 +92,19 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
 
             authManager.authenticate(authInputToken);
-
+            
+            User user = userRepo.findByEmail(body.getEmail()).get();
             String token = jwtUtil.generateToken(body.getEmail());
+            
+            long ninetyDaysInMilliseconds = 7776000000L;
+            if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
+                requestPasswordReset(body.getEmail());
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password has to be reset");
+            }
 
             return Collections.singletonMap("jwt-token", token);
-        }catch (AuthenticationException authExc) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
+        } catch (AuthenticationException e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
     }
 

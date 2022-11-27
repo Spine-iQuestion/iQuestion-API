@@ -3,6 +3,7 @@ package org.spine.iquestionapi.model;
 import javax.persistence.*;
 
 import org.spine.iquestionapi.service.EntityIdResolver;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,6 +15,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
+import lombok.Builder.Default;
 
 /**
  * The user of the application
@@ -78,5 +80,10 @@ public class User {
      */
     @Column(nullable = false)
     private Role role;
-
+    /**
+     * Last unix time the password was changed
+     * Defaults to 0 to force a user to change their password on the first registration
+    */
+    @Column(nullable = false)
+    private long passwordChangeTime = 0;
 }
