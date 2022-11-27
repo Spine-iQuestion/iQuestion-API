@@ -157,6 +157,7 @@ public class AuthController {
 
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
+        user.setPasswordChangeTime(System.currentTimeMillis());
         userRepo.save(user);
         passwordTokenRepo.removeByToken(tokenFromDb.getToken());
 
