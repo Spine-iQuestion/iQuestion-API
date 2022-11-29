@@ -6,6 +6,9 @@ import org.spine.iquestionapi.model.Question;
 import org.spine.iquestionapi.model.Segment;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +32,7 @@ public class CsvUtil {
             List<String[]> data = new ArrayList<String[]>();
 
             ArrayList<String> header = new ArrayList<>(
-                    Arrays.asList("id", "caregiver", "timestamp"));;
+                    Arrays.asList("id", "timestamp"));
 
             for (Segment segment:  entries.get(0).getQuestionnaire().getSegments()){
                 List<Question> vragen = segment.getQuestions();
@@ -46,9 +49,15 @@ public class CsvUtil {
                 ArrayList<String> entryData = new ArrayList<>();
                 Long entryId = entry.getId();
                 entryData.add(entryId.toString());
-                entryData.add(entry.getCaregiver().getName());
+
                 Long entryTimeStamp = entry.getTimestamp();
-                entryData.add(entryTimeStamp.toString());
+                ZoneOffset zoneOffset = ZoneOffset.of("+00:00");
+                LocalDateTime entryDate = LocalDateTime.ofEpochSecond(entryTimeStamp/ 1000, 0, zoneOffset);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                String formattedDateTime = entryDate.format(formatter);
+                entryData.add(formattedDateTime);
+
+
                 for (Segment segment: entry.getQuestionnaire().getSegments()){
                     for(Question question: segment.getQuestions()){
                         entryData.add(question.getLabel());
@@ -61,7 +70,8 @@ public class CsvUtil {
             csvWriter.close();
             return stringWriter.toString();
         }
-        catch (IOException e){
+        catch (Exception e){
+            e.printStackTrace();
             throw new Exception(e.getMessage());
         }
     }
