@@ -104,6 +104,12 @@ public class AuthController {
             }
             authManager.authenticate(authInputToken);
 
+            long ninetyDaysInMilliseconds = 7776000000L;
+            if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
+                requestPasswordReset(body.getEmail());
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password has to be reset");
+            }
+
             String token = jwtUtil.generateToken(body.getEmail());
 
             return Collections.singletonMap("jwt-token", token);
@@ -161,6 +167,7 @@ public class AuthController {
         User user = tokenFromDb.getOwner();
         user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
         user.setEnabled(true);
+        user.setPasswordChangeTime(System.currentTimeMillis());
         userRepo.save(user);
         passwordTokenRepo.removeByToken(tokenFromDb.getToken());
 
