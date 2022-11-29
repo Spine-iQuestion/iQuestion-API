@@ -2,18 +2,15 @@ package org.spine.iquestionapi.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 /**
  * A segment is a part of a questionnaire
@@ -25,12 +22,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Segment {
-    /**
-     * The id of the segment
-     */
+
     @Id
-    @GeneratedValue
-    private long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The name of the segment
      */

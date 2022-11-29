@@ -3,6 +3,7 @@ package org.spine.iquestionapi.controller;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Questionnaire;
@@ -50,7 +51,7 @@ public class EntryController {
      */
     @GetMapping("/{id}")
     @ResponseBody
-    public Entry getEntryById(@PathVariable(value="id") long id){
+    public Entry getEntryById(@PathVariable(value="id") UUID id){
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
 
@@ -69,7 +70,7 @@ public class EntryController {
      */
     @DeleteMapping("/{id}")
     @ResponseBody
-    public void deleteEntry(@PathVariable(value="id") long id){
+    public void deleteEntry(@PathVariable(value="id") UUID id){
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
 
@@ -90,7 +91,7 @@ public class EntryController {
      */
     @GetMapping("/export/{questionnaireId}/json")
     @ResponseBody
-    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") long id){
+    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") UUID id){
         Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
 
@@ -105,7 +106,7 @@ public class EntryController {
      */
     @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
-    public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") long id) throws FileNotFoundException {
+    public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") UUID id) throws FileNotFoundException {
         Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
 

@@ -1,10 +1,8 @@
 package org.spine.iquestionapi.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -14,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 /**
  * The question on a questionnaire
@@ -35,12 +35,10 @@ public class Question {
         OPEN_CLIENT, CLOSED_CLIENT, OPEN_CAREGIVER
     }
 
-    /**
-     * The id of the question
-     */
     @Id
-    @GeneratedValue
-    private long id;
+    @Column(name = "id")
+    @org.hibernate.annotations.Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The question
      */

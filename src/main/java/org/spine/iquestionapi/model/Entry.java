@@ -2,21 +2,15 @@ package org.spine.iquestionapi.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 /**
  * An entry is a questionnaire filled in by a caregiver
@@ -28,12 +22,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Entry  {
+
     @Id
-    @GeneratedValue
-    /**
-     * The id of the entry
-     */
-    private long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The questionnaire the entry is for
      */

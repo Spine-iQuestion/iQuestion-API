@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The utility class for CSV files
@@ -21,7 +22,7 @@ public class CsvUtil {
      * @return the file
      * @throws Exception if the file cannot be written
      */
-    public String entryToCsv(ArrayList<Entry> entries, long id) throws Exception {
+    public String entryToCsv(ArrayList<Entry> entries, UUID id) throws Exception {
 
         try{
             StringWriter stringWriter = new StringWriter();
@@ -34,7 +35,7 @@ public class CsvUtil {
             for (Segment segment:  entries.get(0).getQuestionnaire().getSegments()){
                 List<Question> vragen = segment.getQuestions();
                 for (Question question: vragen){
-                    Long vraagId = question.getId();
+                    UUID vraagId = question.getId();
                     header.add(vraagId.toString());
                 }
             }
@@ -44,7 +45,7 @@ public class CsvUtil {
 
             for (Entry entry: entries){
                 ArrayList<String> entryData = new ArrayList<>();
-                Long entryId = entry.getId();
+                UUID entryId = entry.getId();
                 entryData.add(entryId.toString());
                 entryData.add(entry.getCaregiver().getName());
                 Long entryTimeStamp = entry.getTimestamp();

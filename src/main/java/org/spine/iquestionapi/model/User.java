@@ -2,6 +2,7 @@ package org.spine.iquestionapi.model;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -42,13 +44,11 @@ public class User {
         /** A caregiver */
         CAREGIVER
     }
-    
-    /**
-     * The id of the user
-     */
+
     @Id
-    @GeneratedValue
-    private long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The name of the user
      */
