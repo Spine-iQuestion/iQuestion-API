@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 /**
  * The valid domains for an email
@@ -21,12 +19,11 @@ import java.util.UUID;
 public class EmailDomain {
 
     @Id
-    @Column(name = "id")
-    @Type(type = "uuid-char")
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     /**
      * The domain for an email
      */
-    public String domain;
+    private String domain;
 }
