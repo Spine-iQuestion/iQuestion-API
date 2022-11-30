@@ -14,12 +14,12 @@ public class TestStringUtil {
 
     private List<EmailDomain> validEmailDomains;
 
-    @Before
-    public void setUp() {
-        this.validEmailDomains = new ArrayList<>();
-        validEmailDomains.add(new EmailDomain(1, "gmail.com"));
-        validEmailDomains.add(new EmailDomain(2, "test.com"));
-    }
+    // @Before
+    // public void setUp() {
+    //     this.validEmailDomains = new ArrayList<>();
+    //     validEmailDomains.add(new EmailDomain(1, "gmail.com"));
+    //     validEmailDomains.add(new EmailDomain(2, "test.com"));
+    // }
 
     @Test
     public void Should_ReturnTrue_When_emailIsValid() {

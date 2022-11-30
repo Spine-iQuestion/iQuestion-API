@@ -32,21 +32,13 @@ public class TestEntryController {
     @Test
     public void testCorrectEntry() {
         // Arrange
-        int id = 234;
+        UUID entryId = UUID.randomUUID();
 
         // Act
-        Entry result = entryController.getEntryById(id);
+        Entry result = entryController.getEntryById(entryId);
 
         // Assert
         assertNotNull(result);
-    }
-
-    @Test(expected = ResponseStatusException.class)
-    public void testIncorrectEntry() {
-        // Arrange
-        long id = -1;
-
-//        entryController.getEntryById(id);
     }
 
 
@@ -56,11 +48,11 @@ public class TestEntryController {
     @Transactional
     public void testExportFileTypeIsCSV() throws FileNotFoundException {
         //Arrange
-        long testId = 17;
+        UUID entryId = UUID.randomUUID();
         String expected = "text/csv";
 
         //Act
-        ResponseEntity<Resource> testFile = entryController.exportEntryByIdCsv(testId);
+        ResponseEntity<Resource> testFile = entryController.exportEntryByIdCsv(entryId);
 
         //Assert
         assertEquals(expected, testFile.getHeaders().getContentType().toString());
@@ -71,7 +63,7 @@ public class TestEntryController {
     @Transactional
     public void testExportJsonIsObject() throws FileNotFoundException {
         //Arrange
-        long testId = 17;
+        UUID testId = UUID.randomUUID();
         ArrayList<Entry> expected = new ArrayList<>();
 
         //Act
