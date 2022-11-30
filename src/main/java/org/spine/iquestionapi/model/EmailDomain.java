@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * The valid domains for an email
@@ -20,12 +19,11 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailDomain {
-    /**
-     * The id of the email domain
-     */
+
     @Id
-    @GeneratedValue
-    private long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
 
     /**
      * The domain for an email

@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +32,7 @@ public class TestEntryController {
     @Test
     public void testCorrectEntry() {
         // Arrange
-        long id = 234;
+        int id = 234;
 
         // Act
         Entry result = entryController.getEntryById(id);
@@ -45,7 +46,7 @@ public class TestEntryController {
         // Arrange
         long id = -1;
 
-        entryController.getEntryById(id);
+//        entryController.getEntryById(id);
     }
 
 

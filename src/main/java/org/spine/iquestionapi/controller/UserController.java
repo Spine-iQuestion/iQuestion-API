@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 /**
  * The controller for the user
  */
@@ -47,7 +49,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @ResponseBody
-    public User getUserById(@PathVariable(value="id") long id){
+    public User getUserById(@PathVariable(value="id") UUID id){
         // Check if user is looking for himself
         if (authorizationService.getLoggedInUser().getId() == id) {
             return userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
@@ -63,7 +65,7 @@ public class UserController {
      */
     @PostMapping("/{id}")
     @ResponseBody
-    public User updateUser(@PathVariable(value="id") long id, @RequestBody User user){
+    public User updateUser(@PathVariable(value="id") UUID id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
@@ -79,7 +81,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @ResponseBody
-    public void deleteUser(@PathVariable(value="id") long id){
+    public void deleteUser(@PathVariable(value="id") UUID id){
         // Get user to delete
         User userToDelete = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
         emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);

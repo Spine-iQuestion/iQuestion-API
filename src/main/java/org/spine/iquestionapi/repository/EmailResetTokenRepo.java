@@ -5,11 +5,12 @@ import org.spine.iquestionapi.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The repository for the email reset token
  */
-public interface EmailResetTokenRepo extends JpaRepository<EmailResetToken, Long> {
+public interface EmailResetTokenRepo extends JpaRepository<EmailResetToken, UUID> {
     /**
      * Find token details by a token
      * @param token the token

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 /**
  * The controller for the questionnaire
  */
@@ -33,7 +35,7 @@ public class QuestionnaireController {
      */
     @GetMapping("/{id}")
     @ResponseBody
-    public Questionnaire getQuestionnaireById(@PathVariable(value="id") long id){
+    public Questionnaire getQuestionnaireById(@PathVariable(value="id") UUID id){
         return questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
     }
 
@@ -54,7 +56,7 @@ public class QuestionnaireController {
      */
     @DeleteMapping("/{id}")
     @ResponseBody
-    public void deleteQuestionnaire(@PathVariable(value="id") long id){
+    public void deleteQuestionnaire(@PathVariable(value="id") UUID id){
         questionnaireRepo.deleteById(id);
     }
 

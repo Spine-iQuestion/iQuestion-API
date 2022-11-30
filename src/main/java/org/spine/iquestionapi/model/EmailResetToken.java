@@ -2,6 +2,9 @@ package org.spine.iquestionapi.model;
 
 import javax.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.UUID;
 
 /**
  * This is the body for a request to reset the password
@@ -14,11 +17,9 @@ import lombok.*;
 @NoArgsConstructor
 public class EmailResetToken {
     @Id
-    @GeneratedValue
-    /**
-     * The id of the token
-     */
-    private long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The token
      */
