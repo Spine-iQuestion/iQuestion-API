@@ -55,6 +55,10 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseBody
     public Map<String, String> register(@RequestBody User user) {
+        if (user.getPassword() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You're not allowed to set a password, use change-password endpoint instead.");
+        }
+
         List<EmailDomain> emailDomains = emailDomainRepo.findAll();
 
         // Check if email is of a valid type
