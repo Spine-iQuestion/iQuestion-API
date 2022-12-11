@@ -111,7 +111,7 @@ public class AuthController {
 
             long ninetyDaysInMilliseconds = 7776000000L;
             if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
-                requestPasswordReset(body.getEmail());
+                requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password has to be reset");
             }
 
@@ -126,14 +126,14 @@ public class AuthController {
     /**
      * Request a password reset
      *
-     * @param email the email of the user
+     * @param requestPasswordResetBody a RequestPasswordResetBody containing the users email
      * @return success message
      */
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset(@RequestBody String email) {
+    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody) {
         // Get user from email
-        User user = userRepo.findByEmail(email)
+        User user = userRepo.findByEmail(requestPasswordResetBody.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not found"));
 
         // Check if user already has token
