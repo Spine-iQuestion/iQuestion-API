@@ -36,7 +36,7 @@ public class QuestionnaireController {
     @GetMapping("/{id}")
     @ResponseBody
     public Questionnaire getQuestionnaireById(@PathVariable(value="id") UUID id){
-        return questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
+        return questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
     }
 
     /**

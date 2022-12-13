@@ -1,10 +1,5 @@
 package org.spine.iquestionapi.controller;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
@@ -21,6 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * The controller for the entry
  */
@@ -28,13 +30,17 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/entry")
 @ResponseStatus(HttpStatus.OK)
 public class EntryController {
-    @Autowired private EntryRepo entryRepo;
-    @Autowired private QuestionnaireRepo questionnaireRepo;
-    @Autowired private AuthorizationService authorizationService;
+    @Autowired
+    private EntryRepo entryRepo;
+    @Autowired
+    private QuestionnaireRepo questionnaireRepo;
+    @Autowired
+    private AuthorizationService authorizationService;
     CsvUtil csvUtil = new CsvUtil();
 
     /**
      * Get all entries
+     *
      * @return a list of all entries
      */
     @GetMapping("/all")
@@ -46,12 +52,13 @@ public class EntryController {
 
     /**
      * Get an entry by id
+     *
      * @param id the id of the entry
      * @return the entry
      */
     @GetMapping("/{id}")
     @ResponseBody
-    public Entry getEntryById(@PathVariable(value="id") UUID id){
+    public Entry getEntryById(@PathVariable(value = "id") UUID id) {
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
 
@@ -61,16 +68,17 @@ public class EntryController {
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ENTRY_NOT_FOUND");
     }
 
     /**
      * Delete an entry by id
+     *
      * @param id the id of the entry
      */
     @DeleteMapping("/{id}")
     @ResponseBody
-    public void deleteEntry(@PathVariable(value="id") UUID id){
+    public void deleteEntry(@PathVariable(value = "id") UUID id) {
         User loggedInUser = authorizationService.getLoggedInUser();
         List<Entry> entries = loggedInUser.getEntries();
 
@@ -81,34 +89,36 @@ public class EntryController {
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The entry was not found.");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ENTRY_NOT_FOUND");
     }
 
     /**
      * Export entries of a questionnaire to a json file
+     *
      * @param id the id of the questionnaire
      * @return the json file
      */
     @GetMapping("/export/{questionnaireId}/json")
     @ResponseBody
-    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value="questionnaireId") UUID id){
-        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
-        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
+    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value = "questionnaireId") UUID id) {
+        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
 
         return entryList;
     }
 
     /**
      * Export entries of a questionnaire to a csv file
+     *
      * @param id the id of the questionnaire
      * @return the csv file
      * @throws FileNotFoundException if the file is not found
      */
-    @GetMapping(value="/export/{questionnaireId}/csv", produces = "text/csv")
+    @GetMapping(value = "/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
-    public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value="questionnaireId") UUID id) throws FileNotFoundException {
-        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The questionnaire was not found"));
-        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There were no entries found for this questionnaire"));
+    public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value = "questionnaireId") UUID id) throws FileNotFoundException {
+        Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
+        ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
 
         String csvString = null;
         try {
@@ -121,19 +131,20 @@ public class EntryController {
                     .contentType(MediaType.parseMediaType("text/csv"))
                     .body(resource);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
         }
 
     }
 
     /**
      * Create an entry
+     *
      * @param entry the entry to be created
      * @return the created entry
      */
     @PutMapping("/")
     @ResponseBody
-    public Entry createEntry(@RequestBody Entry entry){
+    public Entry createEntry(@RequestBody Entry entry) {
         User loggedInUser = authorizationService.getLoggedInUser();
         entry.setCaregiver(loggedInUser);
         entry.setTimestamp(System.currentTimeMillis());
