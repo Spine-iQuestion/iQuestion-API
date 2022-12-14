@@ -1,17 +1,14 @@
 package org.spine.iquestionapi.model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
+
+import java.util.UUID;
 
 /**
  * The answer to a question on a questionnaire
@@ -27,8 +24,9 @@ public class Answer {
      * The id of the answer
      */
     @Id
-    @GeneratedValue
-    public long id;
+    @Column(name = "id")
+    @Type(type = "uuid-char")
+    private UUID id = UUID.randomUUID();
     /**
      * The question the answer is for
      */
