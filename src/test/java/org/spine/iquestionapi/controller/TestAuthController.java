@@ -3,6 +3,7 @@ package org.spine.iquestionapi.controller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.spine.iquestionapi.model.LoginCredentials;
+import org.spine.iquestionapi.model.RequestPasswordResetBody;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class TestAuthController {
     @Test
     public void testCorrectLogin() {
         // Arrange
-        LoginCredentials loginCredentials = new LoginCredentials("caregiver@test.com", "123456789");
+        LoginCredentials loginCredentials = new LoginCredentials("spine_admin@test.com", "123456789");
 
         // Act
         Map<String, Object> result = authController.login(loginCredentials);
 
         // Assert
-        assertNotNull(result.get("jwt-token"));
+        assertNotNull(result.get("token"));
     }
 
     @Test(expected = ResponseStatusException.class)
@@ -42,7 +43,7 @@ public class TestAuthController {
         Map<String, Object> result = authController.login(loginCredentials);
 
         //Assert
-        assertNotNull(result.get("jwt-token"));
+        assertNotNull(result.get("token"));
     }
 
     @Test
@@ -51,7 +52,6 @@ public class TestAuthController {
         User user = new User();
         // Generate random email
         user.setEmail(StringUtil.generateRandomString(15) + "@test.com");
-        user.setPassword("123456789");
         user.setOrganization("test");
         user.setRole(User.Role.CAREGIVER);
 
@@ -59,7 +59,7 @@ public class TestAuthController {
         Map<String, String> result = authController.register(user);
 
         // Assert
-        assertNotNull(result.get("jwt-token"));
+        assertNotNull(result.get("token"));
     }
 
     @Test(expected = ResponseStatusException.class)
@@ -68,6 +68,6 @@ public class TestAuthController {
         String email = "invalidEmail@example.com";
 
         // Act
-        authController.requestPasswordReset(email);
+        authController.requestPasswordReset(new RequestPasswordResetBody(email));
     }
 }

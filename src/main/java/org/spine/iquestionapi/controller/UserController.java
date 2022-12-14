@@ -52,7 +52,7 @@ public class UserController {
     public User getUserById(@PathVariable(value="id") UUID id){
         // Check if user is looking for himself
         if (authorizationService.getLoggedInUser().getId() == id) {
-            return userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
+            return userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         }
       return null;
     }
@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping("/{id}")
     @ResponseBody
     public User updateUser(@PathVariable(value="id") UUID id, @RequestBody User user){
-        User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
+        User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         // Update fields that are given
         if (user.getName() != null) userToUpdate.setName(user.getName());
         if (user.getRole() != null) userToUpdate.setRole(user.getRole());
@@ -83,7 +83,7 @@ public class UserController {
     @ResponseBody
     public void deleteUser(@PathVariable(value="id") UUID id){
         // Get user to delete
-        User userToDelete = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user was not found"));
+        User userToDelete = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         emailResetTokenRepo.findByOwner(userToDelete).ifPresent(emailResetTokenRepo::delete);
 
         // Remove user from userrepo
