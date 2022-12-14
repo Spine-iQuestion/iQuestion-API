@@ -77,6 +77,9 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
     @JsonIgnore
     private List <Entry> entries = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
+    @JsonIgnore
+    private List <Questionnaire> questionnaires = new ArrayList<>();
     /**
      * The role of the user
      */

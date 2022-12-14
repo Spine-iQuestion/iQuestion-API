@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -47,5 +48,8 @@ public class Questionnaire {
      */
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();
-    
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "author_id")
+    private User author;
+    private long timestamp;
 }
