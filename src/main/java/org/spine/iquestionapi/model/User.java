@@ -70,6 +70,7 @@ public class User {
     /**
      * The state of activation of the account
      */
+    @JsonIgnore
     private boolean enabled = false;
     /**
      * The entries a user filled in
@@ -87,5 +88,6 @@ public class User {
     private Role role;
 
     @Column(nullable = false)
+    @JsonIgnore
     private long passwordChangeTime = 0;
 }
