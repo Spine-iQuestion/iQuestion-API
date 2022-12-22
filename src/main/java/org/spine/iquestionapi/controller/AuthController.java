@@ -116,7 +116,10 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(body.getEmail());
 
-            return Collections.singletonMap("token", token);
+            return Map.of(
+                    "token", token,
+                    "user", user
+            );
         } catch (AuthenticationException authExc) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS");
         }
