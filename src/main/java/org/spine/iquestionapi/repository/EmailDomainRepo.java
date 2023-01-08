@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * The repository for the EmailDomain
  */
-public interface EmailDomainRepo extends JpaRepository<EmailDomain, String> {
+public interface EmailDomainRepo extends JpaRepository<EmailDomain, Long> {
     Optional<EmailDomain> findByDomain(String domain);
 }
