@@ -4,6 +4,8 @@ import org.spine.iquestionapi.model.EmailDomain;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.spine.iquestionapi.model.LoginCredentials.MIN_LENGTH_PASSWORD;
 
@@ -11,6 +13,9 @@ import static org.spine.iquestionapi.model.LoginCredentials.MIN_LENGTH_PASSWORD;
  * The class for string utilities
  */
 public class StringUtil {
+
+    private static final String DOMAIN_REGEX = "^(?!\\-)[a-zA-Z0-9\\-]{1,63}(?<!\\-)\\.[a-zA-Z]{2,}$";
+
     /**
      * Generate a random string of a given length
      *
@@ -62,5 +67,12 @@ public class StringUtil {
         }
 
         return true;
+    }
+
+    public static boolean isValidDomain(String domain) {
+        Pattern domainPattern = Pattern.compile(DOMAIN_REGEX);
+        Matcher domainMatcher = domainPattern.matcher(domain);
+        
+        return domainMatcher.matches();
     }
 }

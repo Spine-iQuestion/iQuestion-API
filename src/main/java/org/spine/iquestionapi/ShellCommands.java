@@ -32,7 +32,7 @@ public class ShellCommands {
         
         // check if role is a valid role
         if (!EnumUtils.isValidEnum(Role.class, role.toUpperCase())) {
-            return "Role is not valid, use one of the following: " + Role.values().toString().toLowerCase();
+            return "Role is not valid, use one of the following: " + Role.values().toString();
         }
 
         // check if the email domain is allowed, if not return
@@ -66,6 +66,11 @@ public class ShellCommands {
         // check if the domain is empty
         if (domain.isEmpty()) {
             return "Please enter a domain";
+        }
+
+        // check if domain is valid
+        if (!StringUtil.isValidDomain(domain)) {
+            return "Domain is not valid";
         }
 
         // check if the domain already exists
