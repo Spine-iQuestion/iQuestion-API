@@ -11,17 +11,22 @@ import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.commands.Quit;
 
 @ShellComponent
-public class ShellCommands {
+public class ShellCommands implements Quit.Command {
 
     @Autowired private EmailDomainRepo emailDomainRepo;
     @Autowired private UserRepo userRepo;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JWTUtil jwtUtil;
+    @Autowired
+    private ApplicationContext appContext;
 
     @ShellMethod("Add a user")
     public String addUser(String name, String email, String organization, String role, String password) {
@@ -92,5 +97,11 @@ public class ShellCommands {
         return "Example commands:\r\n\r\n" +
                 "add-user --name Hulpverlener --email test2@live.nl --organization hsleiden --role CAREGIVER --password 12345678\r\n" +
                 "add-email-domain --domain live.nl";
+    }
+
+    @ShellMethod(value= "Exit", key = {"quit", "exit", "terminate"})
+    public String quit() {
+        SpringApplication.exit(appContext, () -> 0);
+        return "Exiting...";
     }
 }
