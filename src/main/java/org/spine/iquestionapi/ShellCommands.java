@@ -56,6 +56,7 @@ public class ShellCommands {
         user.setRole(Role.valueOf(role.toUpperCase()));
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(true);
+        user.setPasswordChangeTime(System.currentTimeMillis());
         userRepo.save(user);
 
         return jwtUtil.generateToken(email);
@@ -84,5 +85,12 @@ public class ShellCommands {
         emailDomainRepo.save(emailDomain);
 
         return "Domain added successfully";
+    }
+
+    @ShellMethod("Show example commands")
+    public String examples() {
+        return "Example commands:\r\n\r\n" +
+                "add-user --name Hulpverlener --email test2@live.nl --organization hsleiden --role CAREGIVER --password 12345678\r\n" +
+                "add-email-domain --domain live.nl";
     }
 }
