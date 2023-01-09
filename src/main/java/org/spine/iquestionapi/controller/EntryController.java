@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -98,13 +100,24 @@ public class EntryController {
      * @param id the id of the questionnaire
      * @return the json file
      */
-    @GetMapping("/export/{questionnaireId}/json")
+    @GetMapping(value = "/export/{questionnaireId}/json", produces = "application/json")
     @ResponseBody
-    public ArrayList<Entry> exportEntryByIdJson(@PathVariable(value = "questionnaireId") UUID id) {
+    public ResponseEntity<Resource> exportEntryByIdJson(@PathVariable(value = "questionnaireId") UUID id) {
         Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
 
-        return entryList;
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            InputStream inputStream = new ByteArrayInputStream(objectMapper.writeValueAsBytes(entryList));
+        InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(inputStreamResource);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "INTERNAL_SERVER_ERROR");
+        }
+        
     }
 
     /**
@@ -119,6 +132,9 @@ public class EntryController {
     public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value = "questionnaireId") UUID id) throws FileNotFoundException {
         Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
+        if (entryList.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE");
+        }
 
         String csvString = null;
         try {
