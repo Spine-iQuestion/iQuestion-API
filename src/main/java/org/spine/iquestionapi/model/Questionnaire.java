@@ -48,7 +48,7 @@ public class Questionnaire {
      */
     @OneToMany(cascade = CascadeType.ALL)
     private List<Segment> segments = new ArrayList<>();
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;
     private long timestamp;

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
+import org.spine.iquestionapi.repository.EntryRepo;
 import org.spine.iquestionapi.repository.QuestionnaireRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class QuestionnaireController {
     @Autowired private QuestionnaireRepo questionnaireRepo;
     @Autowired
     private AuthorizationService authorizationService;
+    @Autowired private EntryRepo entryRepo;
 
     /**
      * Get all questionnaires
@@ -72,6 +74,12 @@ public class QuestionnaireController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public void deleteQuestionnaire(@PathVariable(value="id") UUID id){
+        // check if questionnaire exists
+        questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
+
+        // delete all entries linked to the questionnaire
+        entryRepo.findByQuestionnaire(getQuestionnaireById(id)).ifPresent(entries -> entryRepo.deleteAll(entries));
+
         questionnaireRepo.deleteById(id);
     }
 
