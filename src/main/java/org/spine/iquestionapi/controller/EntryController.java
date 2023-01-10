@@ -105,7 +105,9 @@ public class EntryController {
     public ResponseEntity<Resource> exportEntryByIdJson(@PathVariable(value = "questionnaireId") UUID id) {
         Questionnaire questionnaire = questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
         ArrayList<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
-
+        if (entryList.size() == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE");
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             InputStream inputStream = new ByteArrayInputStream(objectMapper.writeValueAsBytes(entryList));
@@ -117,7 +119,6 @@ public class EntryController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "INTERNAL_SERVER_ERROR");
         }
-        
     }
 
     /**
