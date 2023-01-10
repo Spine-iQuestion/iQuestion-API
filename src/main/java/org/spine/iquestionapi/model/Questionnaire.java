@@ -52,4 +52,5 @@ public class Questionnaire {
     @JoinColumn(name = "author_id")
     private User author;
     private long timestamp;
+    private boolean enabled = true;
 }

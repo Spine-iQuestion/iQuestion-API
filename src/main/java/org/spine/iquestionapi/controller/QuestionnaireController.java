@@ -31,7 +31,6 @@ public class QuestionnaireController {
     @Autowired private QuestionnaireRepo questionnaireRepo;
     @Autowired
     private AuthorizationService authorizationService;
-    @Autowired private EntryRepo entryRepo;
 
     /**
      * Get all questionnaires
@@ -39,7 +38,7 @@ public class QuestionnaireController {
      */
     @GetMapping("/all")
     public Questionnaire[] getAllQuestionnaires(){
-        return questionnaireRepo.findAll().toArray(new Questionnaire[0]);
+        return  questionnaireRepo.findByEnabled(true).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
     }
 
     /**
@@ -77,10 +76,10 @@ public class QuestionnaireController {
         // check if questionnaire exists
         questionnaireRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
 
-        // delete all entries linked to the questionnaire
-        entryRepo.findByQuestionnaire(getQuestionnaireById(id)).ifPresent(entries -> entryRepo.deleteAll(entries));
-
-        questionnaireRepo.deleteById(id);
+        // set questionnaire to disabled
+        Questionnaire questionnaire = questionnaireRepo.findById(id).get();
+        questionnaire.setEnabled(false);
+        questionnaireRepo.save(questionnaire);
     }
 
 }

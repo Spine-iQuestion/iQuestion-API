@@ -17,4 +17,5 @@ public interface QuestionnaireRepo extends JpaRepository<Questionnaire, UUID> {
      * @return the questionnaire
      */
     public Optional<Questionnaire[]> findById(Questionnaire questionnaire);
+    public Optional<Questionnaire[]> findByEnabled(boolean enabled);
 }
