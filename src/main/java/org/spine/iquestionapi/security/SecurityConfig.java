@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/auth/register").hasRole("SPINE_ADMIN")
+                //.antMatchers("/auth/register").hasRole("SPINE_ADMIN")
                 .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/entry/**").hasRole("CAREGIVER")
                 .antMatchers(HttpMethod.GET, "/questionnaire/all").authenticated()

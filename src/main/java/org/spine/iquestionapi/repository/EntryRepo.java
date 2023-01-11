@@ -14,8 +14,13 @@ import java.util.UUID;
 public interface EntryRepo extends JpaRepository<Entry, UUID> {
     /**
      * Find filled in entries by a questionnaire
+     * 
      * @param questionnaire the questionnaire
      * @return the entries
      */
     public Optional<ArrayList<Entry>> findByQuestionnaire(Questionnaire questionnaire);
+
+    public Integer countByQuestionnaireId(UUID questionnaireId);
+
+    public Optional<Entry> findTopByQuestionnaireOrderByTimestampDesc(Questionnaire questionnaire);
 }

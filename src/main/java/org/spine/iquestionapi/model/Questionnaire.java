@@ -45,7 +45,7 @@ public class Questionnaire {
     /**
      * The questions in the questionnaire
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Segment> segments = new ArrayList<>();
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")

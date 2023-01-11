@@ -1,7 +1,11 @@
 package org.spine.iquestionapi.controller;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
+import org.spine.iquestionapi.dto.QuestionnaireDto;
 import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EntryRepo;
@@ -31,14 +35,23 @@ public class QuestionnaireController {
     @Autowired private QuestionnaireRepo questionnaireRepo;
     @Autowired
     private AuthorizationService authorizationService;
+    @Autowired EntryRepo entryRepo;
 
     /**
      * Get all questionnaires
      * @return a list of all questionnaires
      */
     @GetMapping("/all")
-    public Questionnaire[] getAllQuestionnaires(){
-        return  questionnaireRepo.findByEnabled(true).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
+    public QuestionnaireDto[] getAllQuestionnaires(){
+        Questionnaire[] questionnaires = questionnaireRepo.findByEnabled(true).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
+        // create dto for each questionnaire
+        Set<QuestionnaireDto> questionnaireDtos = new HashSet<QuestionnaireDto>();
+        for (Questionnaire questionnaire : questionnaires) {
+            QuestionnaireDto questionnaireDto = new QuestionnaireDto(entryRepo);
+            questionnaireDtos.add(questionnaireDto.fromQuestionnaire(questionnaire));
+        }
+
+        return questionnaireDtos.toArray(new QuestionnaireDto[questionnaireDtos.size()]);
     }
 
     /**
