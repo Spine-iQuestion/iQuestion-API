@@ -10,7 +10,6 @@ import org.hibernate.annotations.Type;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;

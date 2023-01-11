@@ -45,7 +45,7 @@ public class ShellCommands implements Quit.Command {
 
         // Check if email is of a valid type
         if (!StringUtil.isValidEmail(email, emailDomains)) {
-            return "Email domain not allowed, you can add it via the addEmailDomain command";
+            return "Email is not valid or email domain is not allowed (you can add it via the addEmailDomain command)";
         }
 
         // Check if the email already exists
