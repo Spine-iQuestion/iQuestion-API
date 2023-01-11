@@ -30,12 +30,12 @@ public class Entry  {
     /**
      * The questionnaire the entry is for
      */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Questionnaire questionnaire;
     /**
      * The user who filled in the questionnaire
      */
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "caregiver_id")
     private User caregiver;
     /**

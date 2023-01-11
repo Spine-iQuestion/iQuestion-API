@@ -70,6 +70,7 @@ public class User {
     /**
      * The state of activation of the account
      */
+    @JsonIgnore
     private boolean enabled = false;
     /**
      * The entries a user filled in
@@ -77,6 +78,9 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
     @JsonIgnore
     private List <Entry> entries = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
+    @JsonIgnore
+    private List <Questionnaire> questionnaires = new ArrayList<>();
     /**
      * The role of the user
      */
@@ -84,5 +88,6 @@ public class User {
     private Role role;
 
     @Column(nullable = false)
+    @JsonIgnore
     private long passwordChangeTime = 0;
 }

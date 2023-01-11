@@ -51,7 +51,7 @@ public class UserController {
     @ResponseBody
     public User getUserById(@PathVariable(value="id") UUID id){
         // Check if user is looking for himself
-        if (authorizationService.getLoggedInUser().getId() == id) {
+        if (authorizationService.getLoggedInUser().getId() == id || authorizationService.getLoggedInUser().getRole() == User.Role.SPINE_ADMIN) {
             return userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         }
       return null;
