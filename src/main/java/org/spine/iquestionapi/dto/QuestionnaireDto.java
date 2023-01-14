@@ -2,6 +2,7 @@ package org.spine.iquestionapi.dto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Questionnaire;
@@ -31,7 +32,7 @@ public class QuestionnaireDto {
     public long timestamp;
     public Integer entryCount;
     public long lastEntryTimestamp;
-    public List<Segment> segments;
+    public Set<Segment> segments;
 
     public QuestionnaireDto(EntryRepo entryRepo) {
         this.entryRepo = entryRepo;
