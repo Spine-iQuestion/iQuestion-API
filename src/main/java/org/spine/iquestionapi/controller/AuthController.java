@@ -1,5 +1,6 @@
 package org.spine.iquestionapi.controller;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.spine.iquestionapi.model.*;
 import org.spine.iquestionapi.repository.EmailDomainRepo;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
@@ -52,6 +53,8 @@ public class AuthController {
 	private EmailSenderService emailSenderService;
     @Autowired
     private Environment env;
+
+    final long ninetyDaysInMilliseconds = 7776000000L;
 
     /**
      * Register a new user
@@ -112,7 +115,7 @@ public class AuthController {
             }
             authManager.authenticate(authInputToken);
 
-            long ninetyDaysInMilliseconds = 7776000000L;
+            
             if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
                 requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RESET_PASSWORD");
