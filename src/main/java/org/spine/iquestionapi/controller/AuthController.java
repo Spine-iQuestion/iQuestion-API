@@ -17,8 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import freemarker.template.TemplateException;
+
 import javax.mail.MessagingException;
+
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +48,7 @@ public class AuthController {
     private EmailDomainRepo emailDomainRepo;
 
     @Autowired
-    private EmailSenderService emailSenderService;
+	private EmailSenderService emailSenderService;
 
     /**
      * Register a new user
@@ -80,12 +85,13 @@ public class AuthController {
         tokenEntity.setOwner(user);
 
         passwordTokenRepo.save(tokenEntity);
+        
         try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
-        } catch (MessagingException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
+            requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
+        } catch (IOException | TemplateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
 
         return Collections.singletonMap("status", "succes");
     }
@@ -110,7 +116,12 @@ public class AuthController {
 
             long ninetyDaysInMilliseconds = 7776000000L;
             if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
-                requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
+                try {
+                    requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
+                } catch (IOException | TemplateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RESET_PASSWORD");
             }
 
@@ -130,10 +141,12 @@ public class AuthController {
      *
      * @param requestPasswordResetBody a RequestPasswordResetBody containing the users email
      * @return success message
+     * @throws TemplateException
+     * @throws IOException
      */
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody) {
+    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody) throws IOException, TemplateException {
         // Get user from email
         User user = userRepo.findByEmail(requestPasswordResetBody.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EMAIL_NOT_FOUND"));
@@ -151,11 +164,15 @@ public class AuthController {
         passwordTokenRepo.save(tokenEntity);
 
         try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
+            Map<String, Object> model = new HashMap<>();
+            model.put("action_url", "https://localhost:4200/reset-password/" + token);
+            model.put("name", user.getName());
+
+            emailSenderService.sendEmail(requestPasswordResetBody, model);
+
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
         }
-
         return Collections.singletonMap("status", "Sent token to email");
     }
 
