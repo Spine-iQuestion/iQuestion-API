@@ -86,12 +86,7 @@ public class AuthController {
 
         passwordTokenRepo.save(tokenEntity);
         
-        try {
-            requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
-        } catch (IOException | TemplateException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
 
         return Collections.singletonMap("status", "succes");
     }
@@ -116,12 +111,7 @@ public class AuthController {
 
             long ninetyDaysInMilliseconds = 7776000000L;
             if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
-                try {
-                    requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
-                } catch (IOException | TemplateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RESET_PASSWORD");
             }
 
@@ -146,7 +136,7 @@ public class AuthController {
      */
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody) throws IOException, TemplateException {
+    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody){
         // Get user from email
         User user = userRepo.findByEmail(requestPasswordResetBody.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EMAIL_NOT_FOUND"));
@@ -170,7 +160,7 @@ public class AuthController {
 
             emailSenderService.sendEmail(requestPasswordResetBody, model);
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException | TemplateException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
         }
         return Collections.singletonMap("status", "Sent token to email");

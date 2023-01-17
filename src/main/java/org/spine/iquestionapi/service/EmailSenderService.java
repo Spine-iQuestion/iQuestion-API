@@ -7,9 +7,6 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-
-import org.spine.iquestionapi.dto.MailRequest;
-import org.spine.iquestionapi.dto.MailResponse;
 import org.spine.iquestionapi.model.RequestPasswordResetBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
