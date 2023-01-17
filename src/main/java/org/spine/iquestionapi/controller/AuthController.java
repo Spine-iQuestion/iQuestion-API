@@ -1,6 +1,5 @@
 package org.spine.iquestionapi.controller;
 
-import org.apache.tomcat.util.bcel.Const;
 import org.spine.iquestionapi.model.*;
 import org.spine.iquestionapi.repository.EmailDomainRepo;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
@@ -9,7 +8,6 @@ import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -2,7 +2,6 @@ package org.spine.iquestionapi.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.mail.MessagingException;
