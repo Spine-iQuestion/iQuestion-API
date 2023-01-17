@@ -172,7 +172,7 @@ public class AuthController {
             Map<String, Object> model = new HashMap<>();
             String webString = env.getProperty("spine.emailsender.websiteurl");
 
-            model.put("action_url", webString + "/reset-password/" + token);
+            model.put("action_url", webString + "/change-password/" + token);
             model.put("name", user.getName());
 
             emailSenderService.sendEmail(requestPasswordResetBody, model);
