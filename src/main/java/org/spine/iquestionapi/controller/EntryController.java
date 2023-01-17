@@ -75,7 +75,7 @@ public class EntryController {
         Set<Entry> entries = loggedInUser.getEntries();
 
         for (Entry entry : entries) {
-            if (entry.getId() == id) {
+            if (entry.getId().equals(id)) {
                 EntryDto entryDto = new EntryDto();
                 entryDto = entryDto.fromEntry(entry);
                 return entryDto;
