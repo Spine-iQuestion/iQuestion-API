@@ -20,8 +20,10 @@ import java.io.IOException;
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
-    @Autowired private MyUserDetailsService userDetailsService;
-    @Autowired private JWTUtil jwtUtil;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+    @Autowired
+    private JWTUtil jwtUtil;
 
     /**
      * Every request is filtered by this method. The function checks if the request has a valid jwt token.
@@ -49,12 +51,17 @@ public class JWTFilter extends OncePerRequestFilter {
                     if(SecurityContextHolder.getContext().getAuthentication() == null){
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-                }catch(JWTVerificationException exc){
+                }catch(JWTVerificationException e){
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
                 }
             }
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } catch (ServletException e) {
+            System.out.println(e.getRootCause().getMessage());
+        }
+        
     }
 }
