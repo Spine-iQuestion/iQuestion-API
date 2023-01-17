@@ -8,6 +8,8 @@ import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,9 +48,10 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailDomainRepo emailDomainRepo;
-
     @Autowired
 	private EmailSenderService emailSenderService;
+    @Autowired
+    private Environment env;
 
     /**
      * Register a new user
@@ -155,7 +158,9 @@ public class AuthController {
 
         try {
             Map<String, Object> model = new HashMap<>();
-            model.put("action_url", "https://localhost:4200/reset-password/" + token);
+            String webString = env.getProperty("spine.emailsender.websiteurl");
+
+            model.put("action_url", webString + "/reset-password/" + token);
             model.put("name", user.getName());
 
             emailSenderService.sendEmail(requestPasswordResetBody, model);
