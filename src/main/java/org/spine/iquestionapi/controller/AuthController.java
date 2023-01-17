@@ -90,7 +90,18 @@ public class AuthController {
 
         passwordTokenRepo.save(tokenEntity);
         
-        requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
+        try {
+            Map<String, Object> model = new HashMap<>();
+            String webString = env.getProperty("spine.emailsender.websiteurl");
+
+            model.put("action_url", webString + "/reset-password/" + token);
+            model.put("name", user.getName());
+
+            emailSenderService.sendEmail(new RequestPasswordResetBody(user.getEmail()), model);
+
+        } catch (MessagingException | IOException | TemplateException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
+        }
 
         return Collections.singletonMap("status", "succes");
     }
