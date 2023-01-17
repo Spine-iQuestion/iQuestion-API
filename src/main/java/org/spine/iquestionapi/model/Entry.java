@@ -1,7 +1,6 @@
 package org.spine.iquestionapi.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -41,8 +40,8 @@ public class Entry  {
     /**
      * The answers to the questions in the questionnaire
      */
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Answer> answers = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Answer> answers;
     /**
      * The date the entry was created
      */

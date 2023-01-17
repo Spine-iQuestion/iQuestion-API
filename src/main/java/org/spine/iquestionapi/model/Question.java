@@ -2,7 +2,6 @@ package org.spine.iquestionapi.model;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.Type;
 import org.spine.iquestionapi.service.EntityIdResolver;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;

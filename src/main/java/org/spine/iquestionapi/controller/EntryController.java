@@ -1,5 +1,6 @@
 package org.spine.iquestionapi.controller;
 
+import org.spine.iquestionapi.dto.EntryDto;
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
@@ -22,7 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -46,10 +48,18 @@ public class EntryController {
      * @return a list of all entries
      */
     @GetMapping("/all")
-    public List<Entry> getAllEntries() {
+    public Set<EntryDto> getAllEntries() {
         User loggedInUser = authorizationService.getLoggedInUser();
-        List<Entry> entries = loggedInUser.getEntries();
-        return entries;
+        Set<Entry> entries = loggedInUser.getEntries();
+        Set<EntryDto> entryDtos = new HashSet<EntryDto>();
+
+        for (Entry entry : entries) {
+            EntryDto entryDto = new EntryDto();
+            entryDto = entryDto.fromEntry(entry);
+            entryDtos.add(entryDto);
+        }
+
+        return entryDtos;
     }
 
     /**
@@ -60,13 +70,15 @@ public class EntryController {
      */
     @GetMapping("/{id}")
     @ResponseBody
-    public Entry getEntryById(@PathVariable(value = "id") UUID id) {
+    public EntryDto getEntryById(@PathVariable(value = "id") UUID id) {
         User loggedInUser = authorizationService.getLoggedInUser();
-        List<Entry> entries = loggedInUser.getEntries();
+        Set<Entry> entries = loggedInUser.getEntries();
 
         for (Entry entry : entries) {
             if (entry.getId() == id) {
-                return entry;
+                EntryDto entryDto = new EntryDto();
+                entryDto = entryDto.fromEntry(entry);
+                return entryDto;
             }
         }
 
@@ -82,7 +94,7 @@ public class EntryController {
     @ResponseBody
     public void deleteEntry(@PathVariable(value = "id") UUID id) {
         User loggedInUser = authorizationService.getLoggedInUser();
-        List<Entry> entries = loggedInUser.getEntries();
+        Set<Entry> entries = loggedInUser.getEntries();
 
         for (Entry entry : entries) {
             if (entry.getId() == id) {

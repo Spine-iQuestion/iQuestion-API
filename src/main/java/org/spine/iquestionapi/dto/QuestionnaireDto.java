@@ -1,6 +1,5 @@
 package org.spine.iquestionapi.dto;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

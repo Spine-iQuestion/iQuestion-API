@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,12 +75,12 @@ public class User {
     /**
      * The entries a user filled in
      */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver", fetch = FetchType.EAGER)
     @JsonIgnore
-    private List <Entry> entries = new ArrayList<>();
+    private Set<Entry> entries;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
     @JsonIgnore
-    private List <Questionnaire> questionnaires = new ArrayList<>();
+    private List <Questionnaire> questionnaires;
     /**
      * The role of the user
      */
