@@ -1,5 +1,6 @@
 package org.spine.iquestionapi.controller;
 
+import org.apache.tomcat.util.bcel.Const;
 import org.spine.iquestionapi.model.*;
 import org.spine.iquestionapi.repository.EmailDomainRepo;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
@@ -8,6 +9,8 @@ import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import freemarker.template.TemplateException;
+
 import javax.mail.MessagingException;
+
+import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,9 +49,12 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailDomainRepo emailDomainRepo;
-
     @Autowired
-    private EmailSenderService emailSenderService;
+	private EmailSenderService emailSenderService;
+    @Autowired
+    private Environment env;
+
+    final long ninetyDaysInMilliseconds = 7776000000L;
 
     /**
      * Register a new user
@@ -80,12 +91,8 @@ public class AuthController {
         tokenEntity.setOwner(user);
 
         passwordTokenRepo.save(tokenEntity);
-        try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
-        } catch (MessagingException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
-        }
-
+        
+        requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
 
         return Collections.singletonMap("status", "succes");
     }
@@ -108,7 +115,7 @@ public class AuthController {
             }
             authManager.authenticate(authInputToken);
 
-            long ninetyDaysInMilliseconds = 7776000000L;
+            
             if(user.getPasswordChangeTime() <= ninetyDaysInMilliseconds){
                 requestPasswordReset(new RequestPasswordResetBody(user.getEmail()));
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RESET_PASSWORD");
@@ -130,10 +137,12 @@ public class AuthController {
      *
      * @param requestPasswordResetBody a RequestPasswordResetBody containing the users email
      * @return success message
+     * @throws TemplateException
+     * @throws IOException
      */
     @PostMapping("/request-password-reset")
     @ResponseBody
-    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody) {
+    public Map<String, Object> requestPasswordReset(@RequestBody RequestPasswordResetBody requestPasswordResetBody){
         // Get user from email
         User user = userRepo.findByEmail(requestPasswordResetBody.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EMAIL_NOT_FOUND"));
@@ -151,11 +160,17 @@ public class AuthController {
         passwordTokenRepo.save(tokenEntity);
 
         try {
-            emailSenderService.sendSimpleEmail(user.getEmail(), "Reset Password", token);
-        } catch (MessagingException e) {
+            Map<String, Object> model = new HashMap<>();
+            String webString = env.getProperty("spine.emailsender.websiteurl");
+
+            model.put("action_url", webString + "/reset-password/" + token);
+            model.put("name", user.getName());
+
+            emailSenderService.sendEmail(requestPasswordResetBody, model);
+
+        } catch (MessagingException | IOException | TemplateException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR");
         }
-
         return Collections.singletonMap("status", "Sent token to email");
     }
 
