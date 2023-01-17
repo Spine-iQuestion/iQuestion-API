@@ -20,13 +20,15 @@ import lombok.Setter;
 public class EntryDto {
     private UUID id;
     private UUID questionnaireId;
+    private String questionnaireName;
     private UUID authorId;
-    private Set<Answer> answers;
     private long timestamp;
+    private Set<Answer> answers;
 
     public EntryDto fromEntry(Entry entry) {
         id = entry.getId();
         questionnaireId = entry.getQuestionnaire().getId();
+        questionnaireName = entry.getQuestionnaire().getName();
         authorId = entry.getCaregiver().getId();
         answers = entry.getAnswers();
         timestamp = entry.getTimestamp();
