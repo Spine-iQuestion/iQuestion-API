@@ -28,7 +28,7 @@ public class EmailSenderService {
 	@Autowired
 	private Configuration config;
 	
-	public Map<String, Object> sendEmail(RequestPasswordResetBody request, Map<String, Object> model) throws MessagingException, IOException, TemplateException {
+	public void sendEmail(RequestPasswordResetBody request, Map<String, Object> model) throws MessagingException, IOException, TemplateException {
 		MimeMessage message = sender.createMimeMessage();
 		// set mediaType
 		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
@@ -44,8 +44,6 @@ public class EmailSenderService {
 		helper.setSubject("Uw wachtwoord resetten - iQuestion");
 		helper.setFrom("noreply@spine.ngo");
 		sender.send(message);
-
-		return Collections.singletonMap("message", "Email sent!");
 	}
 }
 	
