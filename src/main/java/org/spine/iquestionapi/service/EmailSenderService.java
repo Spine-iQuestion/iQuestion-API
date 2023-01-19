@@ -8,7 +8,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.spine.iquestionapi.model.RequestPasswordResetBody;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
