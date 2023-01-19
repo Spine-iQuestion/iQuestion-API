@@ -29,7 +29,7 @@ public class Entry  {
     /**
      * The questionnaire the entry is for
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     private Questionnaire questionnaire;
     /**
      * The user who filled in the questionnaire
@@ -40,7 +40,7 @@ public class Entry  {
     /**
      * The answers to the questions in the questionnaire
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Answer> answers;
     /**
      * The date the entry was created

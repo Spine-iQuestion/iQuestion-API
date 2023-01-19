@@ -3,6 +3,7 @@ package org.spine.iquestionapi.dto;
 import java.util.Set;
 import java.util.UUID;
 
+import org.hibernate.Hibernate;
 import org.spine.iquestionapi.model.Answer;
 import org.spine.iquestionapi.model.Entry;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,9 @@ public class EntryDto {
         questionnaireId = entry.getQuestionnaire().getId();
         questionnaireName = entry.getQuestionnaire().getName();
         authorId = entry.getCaregiver().getId();
-        answers = entry.getAnswers();
+        if (Hibernate.isInitialized(entry.getAnswers())) {
+            answers = entry.getAnswers();
+        }
         timestamp = entry.getTimestamp();
         return this;
     }

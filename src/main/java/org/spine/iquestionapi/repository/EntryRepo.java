@@ -23,7 +23,11 @@ public interface EntryRepo extends JpaRepository<Entry, UUID> {
 
     public Integer countByQuestionnaireId(UUID questionnaireId);
 
+    public Optional<Set<Entry>> findByQuestionnaireId(UUID questionnaireId);
+
     public Optional<Entry> findTopByQuestionnaireOrderByTimestampDesc(Questionnaire questionnaire);
 
     public Optional<Set<Entry>> findByCaregiver(User user);
+
+    public Optional<Entry> findByIdAndCaregiver(UUID id, User user);
 }

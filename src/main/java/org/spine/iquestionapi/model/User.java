@@ -75,7 +75,7 @@ public class User {
     /**
      * The entries a user filled in
      */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caregiver")
     @JsonIgnore
     private Set<Entry> entries;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")

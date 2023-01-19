@@ -4,20 +4,21 @@ import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.Hibernate;
 import org.spine.iquestionapi.dto.EntryDto;
 import org.spine.iquestionapi.model.Entry;
-import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EntryRepo;
-import org.spine.iquestionapi.repository.QuestionnaireRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.spine.iquestionapi.util.CsvUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +50,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EntryController {
     @Autowired
     private EntryRepo entryRepo;
-    @Autowired
-    private QuestionnaireRepo questionnaireRepo;
     @Autowired
     private AuthorizationService authorizationService;
     CsvUtil csvUtil = new CsvUtil();
@@ -82,15 +82,15 @@ public class EntryController {
      * @param id the id of the entry
      * @return the entry
      */
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     @ResponseBody
     public EntryDto getEntryById(@PathVariable(value = "id") UUID id) {
-        Entry entry = entryRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ENTRY_NOT_FOUND"));
         User loggedInUser = authorizationService.getLoggedInUser();
-        if (!entry.getCaregiver().getId().equals(loggedInUser.getId())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_");
-        }
+        Entry entry = entryRepo.findByIdAndCaregiver(id, loggedInUser)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ENTRY_NOT_FOUND"));
+
+        Hibernate.initialize(entry.getAnswers());
 
         return new EntryDto().fromEntry(entry);
     }
@@ -122,19 +122,23 @@ public class EntryController {
      * @param id the id of the questionnaire
      * @return the json file
      */
+    @Transactional(readOnly = true)
     @GetMapping(value = "/export/{questionnaireId}/json", produces = "application/json")
     @ResponseBody
     public ResponseEntity<Resource> exportEntryByIdJson(@PathVariable(value = "questionnaireId") UUID id) {
-        Questionnaire questionnaire = questionnaireRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
-        Set<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire)
+
+        Set<Entry> entryList = entryRepo.findByQuestionnaireId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
         if (entryList.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE");
         }
+
+        // Set to list
+        List<Entry> entryList2 = new ArrayList<Entry>(entryList);
+
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            InputStream inputStream = new ByteArrayInputStream(objectMapper.writeValueAsBytes(entryList));
+            InputStream inputStream = new ByteArrayInputStream(objectMapper.writeValueAsBytes(entryList2));
             InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
 
             return ResponseEntity.ok()
@@ -152,14 +156,15 @@ public class EntryController {
      * @return the csv file
      * @throws FileNotFoundException if the file is not found
      */
+    @Transactional(readOnly = true)
     @GetMapping(value = "/export/{questionnaireId}/csv", produces = "text/csv")
     @ResponseBody
     public ResponseEntity<Resource> exportEntryByIdCsv(@PathVariable(value = "questionnaireId") UUID id)
             throws FileNotFoundException {
-        Questionnaire questionnaire = questionnaireRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "QUESTIONNAIRE_NOT_FOUND"));
-        Set<Entry> entryList = entryRepo.findByQuestionnaire(questionnaire)
+
+        Set<Entry> entryList = entryRepo.findByQuestionnaireId(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE"));
+
         if (entryList.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "NO_ENTRIES_FOR_QUESTIONNAIRE");
         }
@@ -189,10 +194,12 @@ public class EntryController {
      */
     @PutMapping("/")
     @ResponseBody
-    public Entry createEntry(@RequestBody Entry entry) {
+    @Transactional()
+    public Map<String, Object> createEntry(@RequestBody Entry entry) {
         User loggedInUser = authorizationService.getLoggedInUser();
         entry.setCaregiver(loggedInUser);
         entry.setTimestamp(System.currentTimeMillis());
-        return entryRepo.save(entry);
+        entryRepo.save(entry);
+        return Collections.singletonMap("status", "Success");
     }
 }
