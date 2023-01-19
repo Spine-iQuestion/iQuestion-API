@@ -70,7 +70,6 @@ public class User {
     /**
      * The state of activation of the account
      */
-    @JsonIgnore
     private boolean enabled = false;
     /**
      * The entries a user filled in
