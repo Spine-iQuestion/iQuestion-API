@@ -3,6 +3,7 @@ package org.spine.iquestionapi.dto;
 import java.util.Optional;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.spine.iquestionapi.model.Entry;
 import org.spine.iquestionapi.model.Questionnaire;
 import org.spine.iquestionapi.model.Segment;
@@ -40,7 +41,10 @@ public class QuestionnaireDto {
     public QuestionnaireDto fromQuestionnaire(Questionnaire questionnaire) {
         id = questionnaire.getId().toString();
         name = questionnaire.getName();
-        segments = questionnaire.getSegments();
+        // sometimes, segments are not set for performance reasons
+        if (Hibernate.isInitialized(questionnaire.getSegments())) {
+            segments = questionnaire.getSegments();
+        }
         author = new AuthorDto().fromUser(questionnaire.getAuthor());
         timestamp = questionnaire.getTimestamp();
         entryCount = entryRepo.countByQuestionnaireId(questionnaire.getId());

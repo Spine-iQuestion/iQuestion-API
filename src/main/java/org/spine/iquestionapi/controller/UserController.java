@@ -1,15 +1,25 @@
 package org.spine.iquestionapi.controller;
 
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.UUID;
 
 /**
  * The controller for the user
@@ -21,7 +31,8 @@ public class UserController {
     @Autowired private UserRepo userRepo;
     @Autowired private EmailResetTokenRepo emailResetTokenRepo;
     @Autowired private AuthorizationService authorizationService;
-    
+    @PersistenceContext
+	private EntityManager entityManager;
     /**
      * Get all users
      * @return a list of all users
