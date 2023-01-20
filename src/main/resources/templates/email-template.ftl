@@ -8,7 +8,6 @@
     <meta name="supported-color-schemes" content="light dark" />
     <title>iQuestion wachtwoord resetten</title>
     <style type="text/css" rel="stylesheet" media="all">
-    /* Base ------------------------------ */
     
     @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,700&display=swap");
     body {
@@ -41,7 +40,6 @@
       opacity: 0;
       overflow: hidden;
     }
-    /* Type ------------------------------ */
     
     body,
     td,
@@ -90,7 +88,6 @@
     p.sub {
       font-size: 13px;
     }
-    /* Utilities ------------------------------ */
     
     .align-right {
       text-align: right;
@@ -107,7 +104,6 @@
     .u-margin-bottom-none {
       margin-bottom: 0;
     }
-    /* Buttons ------------------------------ */
     
     .button {
       background-color: #3869D4;
@@ -126,6 +122,7 @@
     
     .button--green {
       background-color: #22BC66;
+      background: #22BC66;
       border-top: 10px solid #22BC66;
       border-right: 18px solid #22BC66;
       border-bottom: 10px solid #22BC66;
@@ -146,7 +143,6 @@
         text-align: center !important;
       }
     }
-    /* Attribute list ------------------------------ */
     
     .attributes {
       margin: 0 0 21px;
@@ -160,7 +156,6 @@
     .attributes_item {
       padding: 0;
     }
-    /* Related Items ------------------------------ */
     
     .related {
       width: 100%;
@@ -193,7 +188,6 @@
       text-align: center;
       padding: 25px 0 10px;
     }
-    /* Discount Code ------------------------------ */
     
     .discount {
       width: 100%;
@@ -214,7 +208,6 @@
       text-align: center;
       font-size: 15px;
     }
-    /* Social Icons ------------------------------ */
     
     .social {
       width: auto;
@@ -230,7 +223,6 @@
       margin: 0 8px 10px 8px;
       padding: 0;
     }
-    /* Data table ------------------------------ */
     
     .purchase {
       width: 100%;
@@ -311,7 +303,6 @@
       -premailer-cellpadding: 0;
       -premailer-cellspacing: 0;
     }
-    /* Masthead ----------------------- */
     
     .email-masthead {
       padding: 25px 0;
@@ -329,7 +320,6 @@
       text-decoration: none;
       text-shadow: 0 1px 0 white;
     }
-    /* Body ------------------------------ */
     
     .email-body {
       width: 100%;
@@ -383,7 +373,6 @@
     .content-cell {
       padding: 45px;
     }
-    /*Media Queries ------------------------------ */
     
     @media only screen and (max-width: 600px) {
       .email-body_inner,
@@ -437,34 +426,29 @@
   <![endif]-->
   </head>
   <body>
-    <span class="preheader">Use this link to reset your password. The link is only valid for 24 hours.</span>
+    <span class="preheader">Gebruik deze link om uw wachtwoord te veranderen.</span>
     <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
       <tr>
         <td align="center">
           <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
             <tr>
               <td class="email-masthead">
-                <a href="https://example.com" class="f-fallback email-masthead_name">
+                <a href="${action_url}" class="f-fallback email-masthead_name">
                 Spine - iQuestion
               </a>
               </td>
             </tr>
-            <!-- Email Body -->
             <tr>
               <td class="email-body" width="570" cellpadding="0" cellspacing="0">
                 <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
-                  <!-- Body content -->
                   <tr>
                     <td class="content-cell">
                       <div class="f-fallback">
                         <h1>Hallo ${name},</h1>
                         <p>Recentelijk heeft u een nieuw wachtwoord aangevraagd, of word het de eerste keer dat u gaat inloggen. Om uw wachtwoord aan te maken of te resetten kunt u op de knop hieronder drukken</p>
-                        <!-- Action -->
                         <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
                           <tr>
                             <td align="center">
-                              <!-- Border based button
-           https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
                               <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
                                 <tr>
                                   <td align="center">
@@ -477,11 +461,10 @@
                         </table>
                         <p>Hopende u hiermee voldoende geïnformeerd te hebben,
                           <br>iQuestion</p>
-                        <!-- Sub copy -->
                         <table class="body-sub" role="presentation">
                           <tr>
                             <td>
-                              <p class="f-fallback sub">Als u problemen heb met het klikken van de knop kunt u ook op de link hieronder drukken.</p>
+                              <p class="f-fallback sub">Als u problemen heb met het klikken van de knop kunt u de onderstaande link in uw browser plakken.</p>
                               <p class="f-fallback sub">${action_url}</p>
                             </td>
                           </tr>
