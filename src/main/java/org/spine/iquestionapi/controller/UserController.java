@@ -80,19 +80,18 @@ public class UserController {
         User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
         // Check if user is updating himself
         if (authorizationService.getLoggedInUser().getId() != id && authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
-            throw new ResponseStatusException(HttpStatus.ACCEPTED, "USER_NOT_ALLOWED_TO_UPDATE");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "USER_NOT_ALLOWED_TO_UPDATE");
         }
 
-        if (authorizationService.getLoggedInUser().getId() == id) {
+        if (authorizationService.getLoggedInUser().getRole() == User.Role.SPINE_ADMIN) {
             if (user.getName() != null) userToUpdate.setName(user.getName());
+            if (user.getRole() != null) userToUpdate.setRole(user.getRole());
+            if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+            userToUpdate.setEnabled(user.isEnabled());
             return userRepo.save(userToUpdate);
         }
-
+        
         if (user.getName() != null) userToUpdate.setName(user.getName());
-        if (user.getRole() != null) userToUpdate.setRole(user.getRole());
-        if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
-        userToUpdate.setEnabled(user.isEnabled());
-
         return userRepo.save(userToUpdate);
     }
 
