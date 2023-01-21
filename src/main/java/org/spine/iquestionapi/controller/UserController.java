@@ -78,12 +78,21 @@ public class UserController {
     @ResponseBody
     public User updateUser(@PathVariable(value="id") UUID id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
-        // Update fields that are given
-        if (user.getName() != null) userToUpdate.setName(user.getName());
-        if (user.getRole() != null) userToUpdate.setRole(user.getRole());
-        if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
-        userToUpdate.setEnabled(user.isEnabled());
+        // Check if user is updating himself
+        if (authorizationService.getLoggedInUser().getId() != id && authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.ACCEPTED, "USER_NOT_ALLOWED_TO_UPDATE");
+        }
 
+        if (authorizationService.getLoggedInUser().getId() == id) {
+            if (user.getName() != null) userToUpdate.setName(user.getName());
+        }
+
+        if (authorizationService.getLoggedInUser().getRole() == User.Role.SPINE_ADMIN) {
+            if (user.getName() != null) userToUpdate.setName(user.getName());
+            if (user.getRole() != null) userToUpdate.setRole(user.getRole());
+            if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+            userToUpdate.setEnabled(user.isEnabled());
+        }
         return userRepo.save(userToUpdate);
     }
 
