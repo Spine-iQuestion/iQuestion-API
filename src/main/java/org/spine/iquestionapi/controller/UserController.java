@@ -85,14 +85,14 @@ public class UserController {
 
         if (authorizationService.getLoggedInUser().getId() == id) {
             if (user.getName() != null) userToUpdate.setName(user.getName());
+            return userRepo.save(userToUpdate);
         }
 
-        if (authorizationService.getLoggedInUser().getRole() == User.Role.SPINE_ADMIN) {
-            if (user.getName() != null) userToUpdate.setName(user.getName());
-            if (user.getRole() != null) userToUpdate.setRole(user.getRole());
-            if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
-            userToUpdate.setEnabled(user.isEnabled());
-        }
+        if (user.getName() != null) userToUpdate.setName(user.getName());
+        if (user.getRole() != null) userToUpdate.setRole(user.getRole());
+        if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+        userToUpdate.setEnabled(user.isEnabled());
+
         return userRepo.save(userToUpdate);
     }
 
