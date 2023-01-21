@@ -82,6 +82,7 @@ public class UserController {
         if (user.getName() != null) userToUpdate.setName(user.getName());
         if (user.getRole() != null) userToUpdate.setRole(user.getRole());
         if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+        userToUpdate.setEnabled(user.isEnabled());
 
         return userRepo.save(userToUpdate);
     }
