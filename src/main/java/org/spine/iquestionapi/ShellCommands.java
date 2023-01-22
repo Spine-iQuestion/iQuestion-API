@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spine.iquestionapi.config.ConfigProperties;
 import org.spine.iquestionapi.model.EmailDomain;
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.model.User.Role;
@@ -15,7 +16,6 @@ import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,10 +36,8 @@ public class ShellCommands implements Quit.Command {
     private JWTUtil jwtUtil;
     @Autowired
     private ApplicationContext appContext;
-    @Value("${root_email}")
-    private String rootEmail;
-    @Value("${root_password}")
-    private String rootPassword;
+    @Autowired
+    private ConfigProperties config;
     Logger logger = LoggerFactory.getLogger(ShellCommands.class);
 
     @ShellMethod("Add a user")
@@ -131,14 +129,14 @@ public class ShellCommands implements Quit.Command {
         // Create the root user
         User user = new User();
         user.setName("Root");
-        user.setEmail(rootEmail);
+        user.setEmail(config.getRootEmail());
         user.setOrganization("Spine");
         user.setRole(User.Role.SPINE_ADMIN);
-        user.setPassword(passwordEncoder.encode(rootPassword));
+        user.setPassword(passwordEncoder.encode(config.getRootPassword()));
         user.setEnabled(true);
         user.setPasswordChangeTime(System.currentTimeMillis());
         userRepo.save(user);
 
-        logger.info("Root user created with email: " + rootEmail + " and password: " + rootPassword);
+        logger.info("Root user created with email: {} and password: {}", config.getRootEmail(), config.getRootPassword());
     }
 }
