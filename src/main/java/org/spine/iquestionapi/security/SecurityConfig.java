@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PUT, "/questionnaire/").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/questionnaire/{id}").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/user/me").authenticated()
+                .antMatchers(HttpMethod.POST, "/user/{id}").permitAll()
                 .antMatchers("/user/**").hasRole("SPINE_ADMIN")
                 .and()
                 .userDetailsService(uds)
