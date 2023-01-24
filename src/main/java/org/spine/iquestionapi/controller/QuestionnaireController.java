@@ -75,7 +75,7 @@ public class QuestionnaireController {
      * @param questionnaire the questionnaire to be created
      * @return the created questionnaire
      */
-    @PutMapping("")
+    @PutMapping("/")
     @ResponseBody
     public Questionnaire createQuestionnaire(@RequestBody Questionnaire questionnaire){
         User loggedInUser = authorizationService.getLoggedInUser();
