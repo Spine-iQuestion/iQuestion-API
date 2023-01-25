@@ -42,6 +42,7 @@ public class Questionnaire {
      */
     @NotNull
     private String name;
+    private String description;
     /**
      * The questions in the questionnaire
      */
