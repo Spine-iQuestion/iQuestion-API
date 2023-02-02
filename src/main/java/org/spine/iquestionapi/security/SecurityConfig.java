@@ -105,7 +105,8 @@ public class SecurityConfig {
         final CorsConfiguration configuration = new CorsConfiguration();
         ArrayList<String> allowedOrigins = new ArrayList<String>();
         if (config.getHost() != null) {
-            allowedOrigins.add(config.getHost());
+            allowedOrigins.add(String.format("http://%s", config.getHost()));
+            allowedOrigins.add(String.format("https://%s", config.getHost()));
         }
         allowedOrigins.add("http://localhost:4200");
         allowedOrigins.add("http://localhost:8080");
