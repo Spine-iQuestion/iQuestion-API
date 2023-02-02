@@ -1,9 +1,11 @@
 package org.spine.iquestionapi.security;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.spine.iquestionapi.config.ConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,13 +30,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired private JWTFilter filter;
-    @Autowired private MyUserDetailsService uds;
+    @Autowired
+    private JWTFilter filter;
+    @Autowired
+    private MyUserDetailsService uds;
+    @Autowired
+    private ConfigProperties config;
 
     /**
      * This filter chain is used to filter every request.
      * It checks roles and headers.
-     * @param http the security config 
+     * 
+     * @param http the security config
      * @return the filter chain
      * @throws Exception if the filter chain fails
      */
@@ -46,7 +53,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/auth/**").permitAll()
-                //.antMatchers("/auth/register").hasRole("SPINE_ADMIN")
+                .antMatchers("/auth/register").hasRole("SPINE_ADMIN")
                 .antMatchers("/entry/export/**").hasAnyRole("SPINE_USER", "SPINE_ADMIN")
                 .antMatchers("/entry/**").hasRole("CAREGIVER")
                 .antMatchers(HttpMethod.GET, "/questionnaire/all").authenticated()
@@ -58,10 +65,9 @@ public class SecurityConfig {
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()
-                    .authenticationEntryPoint(
-                            (request, response, authException) ->
-                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
-                    )
+                .authenticationEntryPoint(
+                        (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                                "Unauthorized"))
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -73,6 +79,7 @@ public class SecurityConfig {
 
     /**
      * This bean is used to fetch the preconfigured password encoder
+     * 
      * @return the password encoder
      */
     @Bean
@@ -82,23 +89,33 @@ public class SecurityConfig {
 
     /**
      * This bean is used to fetch the authentication manager
+     * 
      * @param authenticationConfiguration the authentication configuration
      * @return the authentication manager
      * @throws Exception if the authentication manager cannot be created
      */
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
+        ArrayList<String> allowedOrigins = new ArrayList<String>();
+        if (config.getHost() != null) {
+            allowedOrigins.add(String.format("http://%s", config.getHost()));
+            allowedOrigins.add(String.format("https://%s", config.getHost()));
+        }
+        allowedOrigins.add("http://localhost:4200");
+        allowedOrigins.add("http://localhost:8080");
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("HEAD",
                 "GET", "POST", "PUT", "DELETE", "PATCH"));
         // setAllowCredentials(true) is important, otherwise:
-        // The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'.
+        // The value of the 'Access-Control-Allow-Origin' header in the response must
+        // not be the wildcard '*' when the request's credentials mode is 'include'.
         configuration.setAllowCredentials(true);
         // setAllowedHeaders is important! Without it, OPTIONS preflight request
         // will fail with 403 Invalid CORS request

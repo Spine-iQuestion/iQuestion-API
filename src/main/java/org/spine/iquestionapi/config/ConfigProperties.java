@@ -30,4 +30,5 @@ public class ConfigProperties {
     @NotBlank
     @Size(min = 8)
     private String rootPassword;
+    private String host;
 }

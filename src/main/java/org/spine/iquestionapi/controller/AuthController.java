@@ -1,5 +1,6 @@
 package org.spine.iquestionapi.controller;
 
+import org.spine.iquestionapi.config.ConfigProperties;
 import org.spine.iquestionapi.model.*;
 import org.spine.iquestionapi.repository.EmailDomainRepo;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
@@ -8,7 +9,6 @@ import org.spine.iquestionapi.security.JWTUtil;
 import org.spine.iquestionapi.service.EmailSenderService;
 import org.spine.iquestionapi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,7 +50,7 @@ public class AuthController {
     @Autowired
 	private EmailSenderService emailSenderService;
     @Autowired
-    private Environment env;
+    private ConfigProperties config;
 
     final long ninetyDaysInMilliseconds = 7776000000L;
 
@@ -92,7 +92,7 @@ public class AuthController {
         
         try {
             Map<String, Object> model = new HashMap<>();
-            String webString = env.getProperty("spine.emailsender.websiteurl");
+            String webString = config.getHost();
 
             model.put("action_url", webString + "/change-password/" + token);
             model.put("name", user.getName());
@@ -170,7 +170,7 @@ public class AuthController {
 
         try {
             Map<String, Object> model = new HashMap<>();
-            String webString = env.getProperty("spine.emailsender.websiteurl");
+            String webString = config.getHost();
 
             model.put("action_url", webString + "/change-password/" + token);
             model.put("name", user.getName());
