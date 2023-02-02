@@ -25,7 +25,7 @@ public class CsvUtil {
      * @return the file
      * @throws Exception if the file cannot be written
      */
-    public String entryToCsv(ArrayList<Entry> entries, UUID id) throws Exception {
+    public String entryToCsv(List<Entry> entries, UUID id) throws Exception {
 
         try{
             StringWriter stringWriter = new StringWriter();

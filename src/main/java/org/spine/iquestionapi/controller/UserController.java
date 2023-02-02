@@ -1,15 +1,25 @@
 package org.spine.iquestionapi.controller;
 
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.spine.iquestionapi.model.User;
 import org.spine.iquestionapi.repository.EmailResetTokenRepo;
 import org.spine.iquestionapi.repository.UserRepo;
 import org.spine.iquestionapi.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.UUID;
 
 /**
  * The controller for the user
@@ -21,7 +31,8 @@ public class UserController {
     @Autowired private UserRepo userRepo;
     @Autowired private EmailResetTokenRepo emailResetTokenRepo;
     @Autowired private AuthorizationService authorizationService;
-    
+    @PersistenceContext
+	private EntityManager entityManager;
     /**
      * Get all users
      * @return a list of all users
@@ -67,11 +78,20 @@ public class UserController {
     @ResponseBody
     public User updateUser(@PathVariable(value="id") UUID id, @RequestBody User user){
         User userToUpdate = userRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND"));
-        // Update fields that are given
-        if (user.getName() != null) userToUpdate.setName(user.getName());
-        if (user.getRole() != null) userToUpdate.setRole(user.getRole());
-        if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+        // Check if user is updating himself
+        if (authorizationService.getLoggedInUser().getId() != id && authorizationService.getLoggedInUser().getRole() != User.Role.SPINE_ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "USER_NOT_ALLOWED_TO_UPDATE");
+        }
 
+        if (authorizationService.getLoggedInUser().getRole() == User.Role.SPINE_ADMIN) {
+            if (user.getName() != null) userToUpdate.setName(user.getName());
+            if (user.getRole() != null) userToUpdate.setRole(user.getRole());
+            if (user.getOrganization() != null) userToUpdate.setOrganization(user.getOrganization());
+            userToUpdate.setEnabled(user.isEnabled());
+            return userRepo.save(userToUpdate);
+        }
+        
+        if (user.getName() != null) userToUpdate.setName(user.getName());
         return userRepo.save(userToUpdate);
     }
 

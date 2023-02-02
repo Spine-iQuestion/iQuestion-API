@@ -38,6 +38,6 @@ public class Segment {
     /**
      * The questions in the segment
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Question> questions = new ArrayList<>();
 }

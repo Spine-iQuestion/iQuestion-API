@@ -1,7 +1,7 @@
 package org.spine.iquestionapi.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -42,11 +42,12 @@ public class Questionnaire {
      */
     @NotNull
     private String name;
+    private String description;
     /**
      * The questions in the questionnaire
      */
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Segment> segments = new ArrayList<>();
+    private Set<Segment> segments = new HashSet<>();
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     private User author;

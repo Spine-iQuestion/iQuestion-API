@@ -1,40 +1,45 @@
 package org.spine.iquestionapi.service;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import org.spine.iquestionapi.model.RequestPasswordResetBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
-/**
- * The service for sending emails
- */
 @Service
 public class EmailSenderService {
-    @Autowired
-    private JavaMailSender mailSender;
+	
+	@Autowired
+	private JavaMailSender sender;
+	
+	@Autowired
+	private Configuration config;
+	
+	public void sendEmail(RequestPasswordResetBody request, Map<String, Object> model) throws MessagingException, IOException, TemplateException {
+		MimeMessage message = sender.createMimeMessage();
+		// set mediaType
+		MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+				StandardCharsets.UTF_8.name());
+				
+		Template t = config.getTemplate("email-template.ftl");
+		String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
 
-    private final String NO_REPLY_EMAIL = "noreply@spine.ngo";
-
-    /**
-     * Send an email
-     * @param toEmail the email of the recipient
-     * @param subject the subject of the email
-     * @param token the token to be sent
-     * @throws MessagingException if the email could not be sent
-     */
-    public void sendSimpleEmail(String toEmail, String subject, String token) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-
-        helper.setFrom(NO_REPLY_EMAIL);
-        helper.setReplyTo(NO_REPLY_EMAIL);
-
-        helper.setTo(toEmail);
-        helper.setSubject(subject);
-        helper.setText(token, false);
-
-        mailSender.send(mimeMessage);
-    }
+		helper.setTo(request.getEmail());
+		helper.setText(html, true);
+		helper.setSubject("Uw wachtwoord resetten - iQuestion");
+		helper.setFrom("noreply@spine.ngo");
+		sender.send(message);
+	}
 }
+	

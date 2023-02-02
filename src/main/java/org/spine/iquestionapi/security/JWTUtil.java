@@ -6,7 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Value;
+
+import org.spine.iquestionapi.config.ConfigProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -17,8 +19,8 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    @Value("${jwt_secret}")
-    private String secret;
+    @Autowired
+    private ConfigProperties config;
 
     /**
      * Creates a JWT token for the given email
@@ -33,7 +35,7 @@ public class JWTUtil {
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withIssuer("I.Question")
-                .sign(Algorithm.HMAC256(secret));
+                .sign(Algorithm.HMAC256(config.getJwtSecret()));
     }
 
     /**
@@ -43,7 +45,7 @@ public class JWTUtil {
      * @throws JWTVerificationException if the token is invalid
      */
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(config.getJwtSecret()))
                 .withSubject("User Details")
                 .withIssuer("I.Question")
                 .build();
